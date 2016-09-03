@@ -25,11 +25,29 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
+#include "matrix.h"
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
 #define DEBUG
 
+
+void test()
+{
+	int m, n;
+	cin >> m >> n;
+	double **data = new double*[100];
+	re(i, 100)
+		data[i] = new double[100];
+	re(i, m)
+		re(j, n)
+		cin >> data[i][j];
+	matrix one(data, m, n);
+	matrix two(one);
+	cout << one << endl;
+	one *= two;
+	cout << one << endl;
+}
 
 int main()
 {
@@ -42,9 +60,7 @@ int main()
 #endif
 	try {
 		/*主函数*/
-
-
-
+		test();
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
