@@ -34,19 +34,14 @@ using namespace std;
 
 void test()
 {
-	int m, n;
-	cin >> m >> n;
-	double **data = new double*[100];
-	re(i, 100)
-		data[i] = new double[100];
-	re(i, m)
-		re(j, n)
-		cin >> data[i][j];
-	matrix one(data, m, n);
-	matrix two(one);
+	matrix one,two;
+	cin >> one>>two;
 	cout << one << endl;
-	one *= two;
-	cout << one << endl;
+	//one *= two;
+	two *= one;
+	cout << two << endl;
+	re(i, 3)
+		cout << one.find_MaxInCol(i) << " ";
 }
 
 int main()

@@ -41,24 +41,36 @@ void matrix::del()const
 	delete[] data;
 }
 
-void matrix::ExchangeC(unsigned c1, unsigned c2)
+void matrix::ExchangeC(unsigned c1, unsigned c2)const
 {
 	re(i, row)
 		swap(data[i][c1], data[i][c2]);
 }
 
-void matrix::RowAmutiply(unsigned a, double coefficient)
+void matrix::RowAmutiply(unsigned a, double coefficient)const
 {
 	re(i, col)
 		data[a][i] *= coefficient;
 }
 
-void matrix::RowAplusRowB(unsigned a, unsigned b, double coefficient)
+void matrix::RowAplusRowB(unsigned a, unsigned b, double coefficient,unsigned after)const
 {
-	re(i, col)
+	for (unsigned i = after; i < col; i++)
 		data[a][i] += data[b][i] * coefficient;
 }
 
+unsigned matrix::find_MaxInCol(unsigned c, unsigned under)const
+{
+	unsigned ans = under;
+	double current_max = data[under][c];
+	for (unsigned i = under+1; i < row; i++)
+		if(abs(data[i][c])>abs(current_max))
+		{
+			current_max = data[i][c];
+			ans = i;
+		}
+	return ans;
+}
 
 matrix& matrix::operator+=(const matrix& other)
 {
@@ -114,6 +126,23 @@ matrix matrix::operator*(const matrix& other)const
 	return ans;
 }
 
+matrix matrix::LU()
+{
+	unsigned min = (row < col ? row : col) - 1;
+	double coefficient = 0;
+	re(i,min)
+	{
+		for (unsigned j = i + 1; j < row; j++)
+		{
+			coefficient = -data[j][i] / data[i][i];
+			RowAplusRowB(j, i, coefficient);
+			data[j][i] = coefficient;
+		}
+	}
+	return matrix();
+}
+
+
 matrix::~matrix()
 {
 	del();
@@ -129,4 +158,19 @@ ostream& operator<<(ostream& out, const matrix& me)
 		out << endl;
 	}
 	return out;
+}
+
+istream& operator >> (istream& in, matrix& other)
+{
+	if (other.row > 0)
+		other.del();
+	in >> other.row >> other.col;
+	other.data = new double*[other.row];
+	re(i,other.row)
+	{
+		other.data[i] = new double[other.col];
+		re(j, other.col)
+			in >> other.data[i][j];
+	}
+	return in;
 }
