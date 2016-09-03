@@ -22,12 +22,14 @@ public:
 	matrix(double **Data = nullptr, unsigned r = 0, unsigned c = 0);
 	matrix(double *Data, unsigned r = 0, unsigned c = 0);
 	matrix(const matrix& other);
+	matrix& operator=(const matrix &other);
 	friend ostream& operator<<(ostream& out, const matrix& me);
 	friend istream& operator >> (istream& in, matrix& me);
 	matrix& operator+=(const matrix& other);
 	matrix& operator*=(const matrix& other);
+	matrix operator+(const matrix& other)const;
 	matrix operator*(const matrix& other)const;
-	matrix LU();//return U;
+	matrix& LU();//return U;
 	~matrix();
 };
 

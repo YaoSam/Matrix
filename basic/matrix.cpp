@@ -34,11 +34,28 @@ matrix::matrix(const matrix& other):
 	}
 }
 
+matrix& matrix::operator=(const matrix& other)
+{
+	if (this == &other)
+		return *this;
+	del();
+	row = other.row;
+	col = other.col;
+	data = new double*[row];
+	re(i, row)
+	{
+		data[i] = new double[col];
+		memcpy(data[i], other.data[i], sizeof(double)*col);
+	}
+	return*this;
+}
+
 void matrix::del()const
 {
 	re(i, row)
 		delete[] data[i];
-	delete[] data;
+	if (data != nullptr)
+		delete[] data;
 }
 
 void matrix::ExchangeC(unsigned c1, unsigned c2)const
@@ -104,6 +121,22 @@ matrix& matrix::operator*=(const matrix& other)
 	return *this;
 }
 
+matrix matrix::operator+(const matrix& other)const
+{
+	if (other.col != col || other.row != row)
+		throw"sizes are not equal";
+	matrix ans;
+	ans.row = row;
+	ans.col = col;
+	ans.data = new double*[row];
+	re(i,row)
+	{
+		ans.data[i] = new double[col];
+		re(j, col)
+			ans.data[i][j] = data[i][j] + other.[i][j];
+	}
+	return ans;
+}
 
 matrix matrix::operator*(const matrix& other)const
 {
@@ -126,7 +159,7 @@ matrix matrix::operator*(const matrix& other)const
 	return ans;
 }
 
-matrix matrix::LU()
+matrix& matrix::LU()
 {
 	unsigned min = (row < col ? row : col) - 1;
 	double coefficient = 0;
@@ -135,13 +168,14 @@ matrix matrix::LU()
 		for (unsigned j = i + 1; j < row; j++)
 		{
 			coefficient = -data[j][i] / data[i][i];
+			if (coefficient == 0)
+				throw "can't be 0";
 			RowAplusRowB(j, i, coefficient);
 			data[j][i] = coefficient;
 		}
 	}
-	return matrix();
+	return *this;
 }
-
 
 matrix::~matrix()
 {
