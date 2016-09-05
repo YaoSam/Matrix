@@ -1,89 +1,112 @@
 #include "matrix.h"
-matrix::matrix(double *Data, unsigned r, unsigned c):
-	data(nullptr), row(r), col(c)
+matrix::matrix(unsigned r, unsigned c) :
+	data(nullptr), row_p(nullptr), row(r), col(c)
+{
+	if (row == 0 && col == 0)return;
+	data = new double[row*col];
+	memset(data, 0, sizeof(double)*row*col);
+	row_p = new double*[row];
+	re(i, row)
+		row_p[i] = data + col*i;
+}
+
+
+matrix::matrix(double *Data, unsigned r, unsigned c) :
+	data(nullptr), row_p(nullptr), row(r), col(c)
 {
 	if (Data == nullptr)return;
-	data = new double*[row];
+	data = new double[row*col];
+	row_p = new double*[row];
+	memcpy(data, Data, sizeof(double)*r*c);
 	re(i, row)
-	{
-		data[i] = new double[col];
-		memcpy(data[i], Data + i*row, sizeof(double)*col);
-	}
+		row_p[i] = data + col*i;
 }
 					  
 matrix::matrix(double  ** Data, unsigned r, unsigned c) :
-	data(nullptr), row(r), col(c)
+	data(nullptr), row_p(nullptr), row(r), col(c)
 {
-	if (Data == nullptr)return;
-	data = new double*[row];
+	if (row == 0 || col == 0)return;
+	data = new double[row*col];
+	row_p = new double*[row];
 	re(i, row)
 	{
-		data[i] = new double[col];
-		memcpy(data[i], Data[i], sizeof(double)*col);
+		row_p[i] = data + i*col;
+		memcpy(row_p[i], Data[i], sizeof(double)*col);
 	}
 }
 
 matrix::matrix(const matrix& other):
-	row(other.row),col(other.col),
-	data(new double*[other.row])
+	data(nullptr), row_p(nullptr), row(other.row), col(other.col)
 {
+	data = new double[row*col];
+	memcpy(data, other.data, sizeof(double)*row*col);
+	row_p = new double*[row];
 	re(i, row)
-	{
-		data[i] = new double[other.col];
-		memcpy(data[i], other.data[i], sizeof(double)*col);
-	}
+		row_p[i] = data + col*i;
 }
 
 matrix& matrix::operator=(const matrix& other)
 {
 	if (this == &other)
 		return *this;
-	del();
+	release();
 	row = other.row;
 	col = other.col;
-	data = new double*[row];
+	data = new double[row*col];
+	row_p = new double*[row];
+	memcpy(data, other.data, sizeof(double)*row*col);
 	re(i, row)
-	{
-		data[i] = new double[col];
-		memcpy(data[i], other.data[i], sizeof(double)*col);
-	}
+		row_p[i] = data + col*i;
 	return*this;
 }
 
-void matrix::del()const
+void matrix::apply_unsafe(unsigned m, unsigned n)
 {
+	row = m, col = n;
+	data = new double[row*col];
+	memset(data, 0, sizeof(double)*col*row);
+	row_p = new double*[row];
 	re(i, row)
-		delete[] data[i];
-	if (data != nullptr)
-		delete[] data;
+		row_p[i] = data + col*i;
+}
+
+void matrix::release()
+{
+	if(data!=nullptr)
+	{
+		delete[]row_p;
+		delete[]data;
+	}
+	data = nullptr;
+	row_p = nullptr;
 }
 
 void matrix::ExchangeC(unsigned c1, unsigned c2)const
 {
 	re(i, row)
-		swap(data[i][c1], data[i][c2]);
+		swap(row_p[i], row_p[i]);
 }
 
 void matrix::RowAmutiply(unsigned a, double coefficient)const
 {
 	re(i, col)
-		data[a][i] *= coefficient;
+		row_p[a][i] *= coefficient;
 }
 
 void matrix::RowAplusRowB(unsigned a, unsigned b, double coefficient,unsigned after)const
 {
 	for (unsigned i = after; i < col; i++)
-		data[a][i] += data[b][i] * coefficient;
+		row_p[a][i] += row_p[b][i] * coefficient;
 }
 
 unsigned matrix::find_MaxInCol(unsigned c, unsigned under)const
 {
 	unsigned ans = under;
-	double current_max = data[under][c];
-	for (unsigned i = under+1; i < row; i++)
-		if(abs(data[i][c])>abs(current_max))
+	double current_max = row_p[under][c];
+	for (unsigned i = under + 1; i < row; i++)
+		if(abs(row_p[i][c])>abs(current_max))
 		{
-			current_max = data[i][c];
+			current_max = row_p[i][c];
 			ans = i;
 		}
 	return ans;
@@ -95,28 +118,29 @@ matrix& matrix::operator+=(const matrix& other)
 		throw"sizes are not equal";
 	re(i, row)
 		re(j, col)
-		data[i][j] += other.data[i][j];
+		row_p[i][j] += other.row_p[i][j];
 	return *this;
 }
 
 matrix& matrix::operator*=(const matrix& other)
 {
-	double** temp_data;
 	if (other.row != col)
 		throw "size is not right!!!";
-	temp_data = new double*[row];
+	double* temp_data= new double[row*col];
+	double** temp_row_p = new double*[row];
 	re(i, row)
 	{
-		temp_data[i] = new double[other.col];
+		temp_row_p[i] = temp_data + col*i;
 		re(j, other.col)
 		{
-			temp_data[i][j] = 0;
+			temp_row_p[i][j] = 0;
 			re(k, col)
-				temp_data[i][j] += data[i][k] * other.data[k][j];
+				temp_row_p[i][j] += row_p[i][k] * other.row_p[k][j];
 		}
 	}
-	del();
+	release();
 	data = temp_data;
+	row_p = temp_row_p;
 	col = other.col;
 	return *this;
 }
@@ -125,37 +149,22 @@ matrix matrix::operator+(const matrix& other)const
 {
 	if (other.col != col || other.row != row)
 		throw"sizes are not equal";
-	matrix ans;
-	ans.row = row;
-	ans.col = col;
-	ans.data = new double*[row];
+	matrix ans(row,col);
 	re(i,row)
-	{
-		ans.data[i] = new double[col];
 		re(j, col)
-			ans.data[i][j] = data[i][j] + other.[i][j];
-	}
+			ans.row_p[i][j] = row_p[i][j] + other.row_p[i][j];
 	return ans;
 }
 
 matrix matrix::operator*(const matrix& other)const
 {
-	matrix ans;
 	if (other.row != col)
 		throw "size is not right!!!";
-	ans.row = row;
-	ans.col = other.col;
-	ans.data = new double*[row];
+	matrix ans(row,other.col);
 	re(i,row)
-	{
-		ans.data[i] = new double[other.col];
 		re(j, other.col)
-		{
-			ans.data[i][j] = 0;
 			re(k, col)
-				ans.data[i][j] += data[i][k] * other.data[k][j];
-		}
-	}
+				ans.row_p[i][j] += row_p[i][k] * other.row_p[k][j];
 	return ans;
 }
 
@@ -167,20 +176,39 @@ matrix& matrix::LU()
 	{
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			coefficient = -data[j][i] / data[i][i];
+			coefficient = -row_p[j][i] / row_p[i][i];
 			if (coefficient == 0)
 				throw "can't be 0";
 			RowAplusRowB(j, i, coefficient);
-			data[j][i] = coefficient;
+			row_p[j][i] = coefficient;
 		}
 	}
 	return *this;
 }
 
+matrix matrix::ChosenLU()//TODO
+{
+	matrix P(row,row);
+	unsigned min = (row < col ? row : col) - 1;
+	double coefficient = 0;
+	re(i, min)
+	{
+		for (unsigned j = i + 1; j < row; j++)
+		{
+			coefficient = -row_p[j][i] / row_p[i][i];
+			if (coefficient == 0)
+				throw "can't be 0";
+			RowAplusRowB(j, i, coefficient);
+			row_p[j][i] = coefficient;
+		}
+	}
+	return P;
+}
+
+
 matrix::~matrix()
 {
-	del();
-	data = nullptr;
+	release();
 }
 
 ostream& operator<<(ostream& out, const matrix& me)
@@ -188,7 +216,7 @@ ostream& operator<<(ostream& out, const matrix& me)
 	re(i, me.row)
 	{
 		re(j, me.col)
-			out << me.data[i][j] << " ";
+			out << me.row_p[i][j] << " ";
 		out << endl;
 	}
 	return out;
@@ -197,14 +225,16 @@ ostream& operator<<(ostream& out, const matrix& me)
 istream& operator >> (istream& in, matrix& other)
 {
 	if (other.row > 0)
-		other.del();
+		other.release();
 	in >> other.row >> other.col;
-	other.data = new double*[other.row];
+	if (other.row*other.col == 0)return in;
+	other.data = new double[other.row*other.col];
+	other.row_p = new double*[other.row];
 	re(i,other.row)
 	{
-		other.data[i] = new double[other.col];
+		other.row_p[i] = other.data + i*other.col;
 		re(j, other.col)
-			in >> other.data[i][j];
+			in >> other.row_p[i][j];
 	}
 	return in;
 }
