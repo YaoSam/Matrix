@@ -10,7 +10,6 @@ matrix::matrix(unsigned r, unsigned c) :
 		row_p[i] = data + col*i;
 }
 
-
 matrix::matrix(double *Data, unsigned r, unsigned c) :
 	data(nullptr), row_p(nullptr), row(r), col(c)
 {
@@ -39,10 +38,11 @@ matrix::matrix(const matrix& other):
 	data(nullptr), row_p(nullptr), row(other.row), col(other.col)
 {
 	data = new double[row*col];
-	memcpy(data, other.data, sizeof(double)*row*col);
 	row_p = new double*[row];
-	re(i, row)
-		row_p[i] = data + col*i;
+	memcpy(data, other.data, sizeof(double)*row*col);
+	memcpy(row_p, other.row_p, sizeof(double*)*col);
+	re(i, row)//整体位移。
+		row_p[i] += data - other.data;
 }
 
 matrix& matrix::operator=(const matrix& other)
@@ -55,10 +55,20 @@ matrix& matrix::operator=(const matrix& other)
 	data = new double[row*col];
 	row_p = new double*[row];
 	memcpy(data, other.data, sizeof(double)*row*col);
+	memcpy(row_p, other.row_p, sizeof(double*)*col);
 	re(i, row)
-		row_p[i] = data + col*i;
+		row_p[i] += data - other.data;
 	return*this;
 }
+
+matrix matrix::one(unsigned n)
+{
+	matrix ans(n,n);
+	re(i, n)
+		ans.row_p[i][i] = 1;
+	return ans;
+}
+
 
 void matrix::apply_unsafe(unsigned m, unsigned n)
 {
@@ -170,7 +180,7 @@ matrix matrix::operator*(const matrix& other)const
 
 matrix& matrix::LU()
 {
-	unsigned min = (row < col ? row : col) - 1;
+	unsigned min = (row < col ? row : col) - 1;//提前-1.最后一行不用处理。
 	double coefficient = 0;
 	re(i,min)
 	{
@@ -189,19 +199,25 @@ matrix& matrix::LU()
 matrix matrix::ChosenLU()//TODO
 {
 	matrix P(row,row);
-	unsigned min = (row < col ? row : col) - 1;
+	re(i, row)
+		P.row_p[i][i] = 1;
+	unsigned min = (row < col ? row : col) - 1, max = 0;//max:最大的行的序号。
 	double coefficient = 0;
 	re(i, min)
-	{
 		for (unsigned j = i + 1; j < row; j++)
 		{
+			max=find_MaxInCol(i, i);
+			if(max!=i)
+			{
+				P.ExchangeR(i, max);
+				ExchangeR(i, max);
+			}
 			coefficient = -row_p[j][i] / row_p[i][i];
 			if (coefficient == 0)
 				throw "can't be 0";
 			RowAplusRowB(j, i, coefficient);
 			row_p[j][i] = coefficient;
 		}
-	}
 	return P;
 }
 

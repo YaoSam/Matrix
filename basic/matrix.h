@@ -25,6 +25,7 @@ public:
 		re(i, row)
 			memset(row_p[i], 0, sizeof(double)*col);
 	}
+	matrix static one(unsigned n);
 public:
 	matrix(unsigned r, unsigned c);
 	matrix(double **Data = nullptr, unsigned r = 0, unsigned c = 0);

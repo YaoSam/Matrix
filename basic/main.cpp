@@ -37,9 +37,8 @@ void test()
 	matrix one,two;
 	cin >> one>>two;
 	cout << one << endl;
-	//one *= two;
-	two *= one;
-	cout << two << endl;
+	cout << one.ChosenLU() << endl;
+	cout << one << endl;
 	re(i, 3)
 		cout << one.find_MaxInCol(i) << " ";
 }
