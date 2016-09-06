@@ -30,7 +30,7 @@ matrix::matrix(double  ** Data, unsigned r, unsigned c) :
 	re(i, row)
 	{
 		row_p[i] = data + i*col;
-		memcpy(row_p[i], Data[i], sizeof(double)*col);
+		memcpy(row_p[i], Data[i], sizeof(double)*row);
 	}
 }
 
@@ -40,7 +40,7 @@ matrix::matrix(const matrix& other):
 	data = new double[row*col];
 	row_p = new double*[row];
 	memcpy(data, other.data, sizeof(double)*row*col);
-	memcpy(row_p, other.row_p, sizeof(double*)*col);
+	memcpy(row_p, other.row_p, sizeof(double*)*row);
 	re(i, row)//整体位移。
 		row_p[i] += data - other.data;
 }
@@ -189,14 +189,14 @@ matrix& matrix::LU()
 			coefficient = -row_p[j][i] / row_p[i][i];
 			if (coefficient == 0)
 				throw "can't be 0";
-			RowAplusRowB(j, i, coefficient);
-			row_p[j][i] = coefficient;
+			RowAplusRowB(j, i, coefficient,i);
+			row_p[j][i] = -coefficient;
 		}
 	}
 	return *this;
 }
 
-matrix matrix::ChosenLU()//TODO
+matrix matrix::ChosenLU()
 {
 	matrix P(row,row);
 	re(i, row)
@@ -215,12 +215,36 @@ matrix matrix::ChosenLU()//TODO
 			coefficient = -row_p[j][i] / row_p[i][i];
 			if (coefficient == 0)
 				throw "can't be 0";
-			RowAplusRowB(j, i, coefficient);
-			row_p[j][i] = coefficient;
+			RowAplusRowB(j, i, coefficient,i);
+			row_p[j][i] = -coefficient;
 		}
 	return P;
 }
 
+matrix matrix::solve(const matrix& input)const
+{
+	matrix ans(input.row, 1),me(*this);
+	matrix P(me.ChosenLU());
+	cout << me << endl;
+	cout << P*P << endl;
+	matrix b(P*input);
+	double temp = 0;//先累加，减少误差。
+	re(i,row)
+	{
+		for (unsigned k = 0; k + 1 <= i; k++)
+			temp += me.row_p[i][k] * ans.data[k];
+		ans.data[i] = b.data[i] - temp;
+		temp = 0;//temp不能忘了重置。
+	}
+	for (int i = row - 1; i >= 0; i--, temp = 0)
+	{
+		for (unsigned k = i + 1; k < row; k++)
+			temp += me.row_p[i][k] * ans.data[k];
+		(ans.data[i] -= temp) /= me.row_p[i][i];
+	}
+	cout << ans << endl;
+	return ans;
+}
 
 matrix::~matrix()
 {

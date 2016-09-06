@@ -40,6 +40,7 @@ public:
 	matrix operator*(const matrix& other)const;
 	matrix& LU();
 	matrix ChosenLU();
+	matrix solve(const matrix& input)const;
 	~matrix();
 };
 

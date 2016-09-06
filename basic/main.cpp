@@ -37,10 +37,10 @@ void test()
 	matrix one,two;
 	cin >> one>>two;
 	cout << one << endl;
-	cout << one.ChosenLU() << endl;
-	cout << one << endl;
-	re(i, 3)
-		cout << one.find_MaxInCol(i) << " ";
+	//one.ChosenLU();
+	//cout << one << endl;
+	matrix ans=one.solve(two);
+	cout << ans << endl;
 }
 
 int main()
