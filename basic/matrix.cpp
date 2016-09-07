@@ -49,13 +49,16 @@ matrix& matrix::operator=(const matrix& other)
 {
 	if (this == &other)
 		return *this;
-	release();
-	row = other.row;
-	col = other.col;
-	data = new double[row*col];
-	row_p = new double*[row];
+	if (row != other.row || col != other.col)//形状相同的时候直接复制即可。
+	{
+		release();
+		row = other.row;
+		col = other.col;
+		data = new double[row*col];
+		row_p = new double*[row];
+	}
 	memcpy(data, other.data, sizeof(double)*row*col);
-	memcpy(row_p, other.row_p, sizeof(double*)*col);
+	memcpy(row_p, other.row_p, sizeof(double*)*row);
 	re(i, row)
 		row_p[i] += data - other.data;
 	return*this;
@@ -223,10 +226,10 @@ matrix matrix::ChosenLU()
 
 matrix matrix::solve(const matrix& input)const
 {
+	if (input.row != row)
+		throw "error";
 	matrix ans(input.row, 1),me(*this);
 	matrix P(me.ChosenLU());
-	cout << me << endl;
-	cout << P*P << endl;
 	matrix b(P*input);
 	double temp = 0;//先累加，减少误差。
 	re(i,row)
@@ -242,9 +245,31 @@ matrix matrix::solve(const matrix& input)const
 			temp += me.row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= me.row_p[i][i];
 	}
-	cout << ans << endl;
 	return ans;
 }
+
+matrix matrix::LU_solve(const matrix& input) const
+{
+	if (input.row != row)
+		throw "error";
+	matrix ans(input.row, 1);
+	double temp = 0;//先累加，减少误差。
+	re(i, row)
+	{
+		for (unsigned k = 0; k + 1 <= i; k++)
+			temp += row_p[i][k] * ans.data[k];
+		ans.data[i] = input.data[i] - temp;
+		temp = 0;//temp不能忘了重置。
+	}
+	for (int i = row - 1; i >= 0; i--, temp = 0)
+	{
+		for (unsigned k = i + 1; k < row; k++)
+			temp += row_p[i][k] * ans.data[k];
+		(ans.data[i] -= temp) /= row_p[i][i];
+	}
+	return ans;
+}
+
 
 matrix::~matrix()
 {

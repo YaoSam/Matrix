@@ -41,6 +41,7 @@ public:
 	matrix& LU();
 	matrix ChosenLU();
 	matrix solve(const matrix& input)const;
+	matrix LU_solve(const matrix& input)const;
 	~matrix();
 };
 

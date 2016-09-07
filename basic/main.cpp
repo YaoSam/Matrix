@@ -26,6 +26,7 @@
 #include <time.h>
 #include <algorithm>
 #include "matrix.h"
+#include <iomanip>
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
@@ -36,10 +37,10 @@ void test()
 {
 	matrix one,two;
 	cin >> one>>two;
+	cout <<setprecision(10)<<showpoint<< one << endl;
+	matrix P=one.ChosenLU();
 	cout << one << endl;
-	//one.ChosenLU();
-	//cout << one << endl;
-	matrix ans=one.solve(two);
+	matrix ans = one.LU_solve(P*two);
 	cout << ans << endl;
 }
 
