@@ -31,8 +31,13 @@ using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
 #define DEBUG
-const double R = 1.797693134862315e+308;//最大double
-const double r = 5.562684646268003457725581793331e-309;//最小的正double
+union
+{
+	int i;
+	double d;
+}wtf;
+double R = numeric_limits<double>::max();//最大double
+double r = numeric_limits<double>::min();//最小的正double
 double B, b, S, s, E;
 
 double n_two(int n)
@@ -48,6 +53,10 @@ double n_two(int n)
 }
 void initial()
 {
+	cout << r << endl;
+	wtf.i = 1;
+	r = wtf.d;
+	cout << r << endl;
 	const int emin = -1024, emax = 1024, t = 53;//参数由编译环境确定。
 	b = n_two((emin - 1) / 2);
 	B = n_two((emax - t + 1) / 2);
