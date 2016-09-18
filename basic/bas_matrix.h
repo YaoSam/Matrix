@@ -55,8 +55,8 @@ public:
 			me.release();
 		in >> me.row >> me.col;
 		if (me.row*me.col == 0)return in;
-		me.data = new double[me.row*me.col];
-		me.row_p = new double*[me.row];
+		me.data = new T[me.row*me.col];
+		me.row_p = new T*[me.row];
 		re(i, me.row)
 		{
 			me.row_p[i] = me.data + i*me.col;
@@ -178,9 +178,8 @@ Template( ) bas_matrix(const bas_matrix & other) :
 	data = new T[row*col];
 	row_p = new T*[row];
 	memcpy(data, other.data, sizeof(T)*row*col);
-	memcpy(row_p, other.row_p, sizeof(T*)*row);
 	re(i, row)//整体位移。
-		row_p[i] += data - other.data;
+		row_p[i] = data + (other.row_p[i] - other.data);
 }
 
 Template(deri_matrix &) operator=(const deri_matrix & other)
@@ -196,9 +195,8 @@ Template(deri_matrix &) operator=(const deri_matrix & other)
 		row_p = new T*[row];
 	}
 	memcpy(data, other.data, sizeof(T)*row*col);
-	memcpy(row_p, other.row_p, sizeof(T*)*row);
 	re(i, row)
-		row_p[i] += data - other.data;
+		row_p[i] = data + (other.row_p[i] - other.data);
 	return static_cast<deri_matrix&>(*this);
 }
 
@@ -261,19 +259,19 @@ Template(deri_matrix) operator*(const deri_matrix & other) const
 Template(deri_matrix &) LU()//必须定义除法
 {
 	unsigned min = (row < col ? row : col) - 1;//提前-1.最后一行不用处理。
-	double coefficient = 0;
+	T coefficient = 0;
 	re(i, min)
 	{
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			coefficient = -row_p[j][i] / row_p[i][i];
+			coefficient = 0-row_p[j][i] / row_p[i][i];
 			if (coefficient == 0)
 				throw "can't be 0";
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = -coefficient;
+			row_p[j][i] = 0-coefficient;
 		}
 	}
-	return *this;
+	return static_cast<deri_matrix&>(*this);
 }
 
 Template(deri_matrix) ChosenLU()
@@ -282,7 +280,7 @@ Template(deri_matrix) ChosenLU()
 	re(i, row)
 		P.row_p[i][i] = 1;
 	unsigned min = (row < col ? row : col) - 1, max = 0;//max:最大的行的序号。
-	double coefficient = 0;
+	T coefficient = 0;
 	re(i, min)
 		for (unsigned j = i + 1; j < row; j++)
 		{
@@ -292,11 +290,11 @@ Template(deri_matrix) ChosenLU()
 				P.ExchangeR(i, max);
 				ExchangeR(i, max);
 			}
-			coefficient = -row_p[j][i] / row_p[i][i];
+			coefficient = 0-row_p[j][i] / row_p[i][i];
 			if (coefficient == 0)
 				throw "can't be 0";
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = -coefficient;
+			row_p[j][i] = 0-coefficient;
 		}
 	return P;
 }
@@ -306,7 +304,7 @@ Template(deri_matrix)LU_solve(const deri_matrix & input) const
 	if (input.row != row)
 		throw "error";
 	deri_matrix ans(input.row, 1);
-	double temp = 0;//先累加，减少误差。
+	T temp = 0;//先累加，减少误差。
 	re(i, row)
 	{
 		for (unsigned k = 0; k + 1 <= i; k++)
@@ -328,9 +326,10 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	if (input.row != row)
 		throw "error";
 	deri_matrix ans(input.row, 1), me(static_cast<const deri_matrix&>(*this));
+	cout << me << endl;
 	deri_matrix P(me.ChosenLU());
 	deri_matrix b(P*input);
-	double temp = 0;//先累加，减少误差。
+	T temp = 0;//先累加，减少误差。
 	re(i, row)
 	{
 		for (unsigned k = 0; k + 1 <= i; k++)
