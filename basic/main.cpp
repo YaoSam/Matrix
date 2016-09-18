@@ -37,11 +37,12 @@ void test()
 {
 	matrix one,two;
 	cin >> one>>two;
-	cout <<setprecision(10)<<showpoint<< one << endl;
-	matrix P=one.ChosenLU();
 	cout << one << endl;
-	matrix ans = one.LU_solve(P*two);
+	cout << two << endl;
+	cout << one << endl;
+	matrix ans = one.solve(two);
 	cout << ans << endl;
+
 }
 
 int main()

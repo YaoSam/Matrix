@@ -21,6 +21,9 @@
     <ClCompile Include="matrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="bas_matrix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="in.txt">
@@ -32,6 +35,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="matrix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="bas_matrix.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
