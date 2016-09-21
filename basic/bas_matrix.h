@@ -39,6 +39,8 @@ public:
 	bas_matrix(T *Data, unsigned r = 0, unsigned c = 0);
 	bas_matrix(const bas_matrix& other);
 	deri_matrix& operator=(const deri_matrix &other);
+	T *const operator[](unsigned r) { return row_p[r]; }
+	const T*const operator[](unsigned r)const { return row_p[r]; }
 	friend ostream& operator<<(ostream& out, const deri_matrix& me)
 	{
 		re(i, me.row)
@@ -74,6 +76,7 @@ public:
 	deri_matrix ChosenLU();
 	deri_matrix solve(const deri_matrix& input)const;
 	deri_matrix LU_solve(const deri_matrix& input)const;
+	deri_matrix inverse()const;
 	virtual ~bas_matrix();
 };
 
@@ -264,9 +267,11 @@ Template(deri_matrix &) LU()//必须定义除法
 	{
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			coefficient = 0-row_p[j][i] / row_p[i][i];
-			if (coefficient == 0)
+			if (row_p[i][i] == 0)
 				throw "can't be 0";
+			if (row_p[j][i] == 0)
+				continue;
+			coefficient = 0 - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
 			row_p[j][i] = 0-coefficient;
 		}
@@ -290,9 +295,11 @@ Template(deri_matrix) ChosenLU()
 				P.ExchangeR(i, max);
 				ExchangeR(i, max);
 			}
-			coefficient = 0-row_p[j][i] / row_p[i][i];
-			if (coefficient == 0)
+			if (row_p[i][i] == 0)
 				throw "can't be 0";
+			if (row_p[j][i] == 0)
+				continue;
+			coefficient = 0 - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
 			row_p[j][i] = 0-coefficient;
 		}
@@ -326,7 +333,6 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	if (input.row != row)
 		throw "error";
 	deri_matrix ans(input.row, 1), me(static_cast<const deri_matrix&>(*this));
-	cout << me << endl;
 	deri_matrix P(me.ChosenLU());
 	deri_matrix b(P*input);
 	T temp = 0;//先累加，减少误差。
@@ -342,6 +348,31 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 		for (unsigned k = i + 1; k < row; k++)
 			temp += me.row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= me.row_p[i][i];
+	}
+	return ans;
+}
+Template(deri_matrix) inverse() const
+{
+	if (col != row)
+		throw "行列不同，无法求逆。";
+	deri_matrix ans(row, row), me(static_cast<const deri_matrix&>(*this));
+	deri_matrix b(me.ChosenLU());
+	T temp = 0;//先累加，减少误差。
+	re(j,row)
+	{
+		re(i, row)
+		{
+			for (unsigned k = 0; k + 1 <= i; k++)
+				temp += me.row_p[i][k] * ans.row_p[k][j];
+			ans.row_p[i][j] = b.row_p[i][j] - temp;
+			temp = 0;//temp不能忘了重置。
+		}
+		for (int i = row - 1; i >= 0; i--, temp = 0)
+		{
+			for (unsigned k = i + 1; k < row; k++)
+				temp += me.row_p[i][k] * ans.row_p[k][j];
+			(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
+		}
 	}
 	return ans;
 }

@@ -56,7 +56,30 @@ int main()
 #endif
 	try {
 		/*主函数*/
-		test();
+		//test();
+		const unsigned n = 10;
+		matrix A(n, n);
+		matrix B(n, 1);
+		B[0][0] = 7;
+		re(i,n)
+		{
+			A[i][i] = 6;
+			if (i > 0)
+			{
+				A[i - 1][i] = 1;
+				A[i][i - 1] = 8;
+				B[0][i] = 15;
+			}
+		}
+		B[0][n-1] = 14;
+		cout << A << endl;
+		//A.LU();
+		cout << A.inverse() << endl;
+		matrix P(A.ChosenLU());
+		//cout << A.ChosenLU() << endl;
+		//cout << A << endl;
+		cout <<setprecision(15)<< A.LU_solve(P*B) << endl;;
+		//cout << B << endl;
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
