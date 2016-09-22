@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+
+  <Type Name="complex">
+    <DisplayString>{{{x}+i{y}}}</DisplayString>
+  </Type>
+
+  <Type Name="natural_num">
+    <AlternativeType Name="N"/>
+    <DisplayString>{{{up}/{down}}}</DisplayString>
+  </Type>
+
+  <Type Name="Matrix&lt;*&gt;">
+      <DisplayString>{{row = {row},col={col}}}</DisplayString>
+      <Expand>
+        <IndexListItems>
+          <Size>row*col</Size>
+          <ValueNode>(*(row_p+$i/row))[$i%col]</ValueNode>
+        </IndexListItems>
+      </Expand>
+  </Type>
+</AutoVisualizer>
