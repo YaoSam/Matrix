@@ -13,6 +13,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hornor's Rule", "Hornor's R
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "complex_matrix", "complex_matrix\complex_matrix.vcxproj", "{FFC8F67B-CA99-466C-9EC1-C74AA04A7E9B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "自然数", "自然数\自然数.vcxproj", "{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1394FBF-4CD7-4147-B467-1E7837C80F33}"
+	ProjectSection(SolutionItems) = preProject
+		Matrix_Natvis.natvis = Matrix_Natvis.natvis
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,6 +68,14 @@ Global
 		{FFC8F67B-CA99-466C-9EC1-C74AA04A7E9B}.Release|x64.Build.0 = Release|x64
 		{FFC8F67B-CA99-466C-9EC1-C74AA04A7E9B}.Release|x86.ActiveCfg = Release|Win32
 		{FFC8F67B-CA99-466C-9EC1-C74AA04A7E9B}.Release|x86.Build.0 = Release|Win32
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Debug|x64.ActiveCfg = Debug|x64
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Debug|x64.Build.0 = Debug|x64
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Debug|x86.ActiveCfg = Debug|Win32
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Debug|x86.Build.0 = Debug|Win32
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x64.ActiveCfg = Release|x64
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x64.Build.0 = Release|x64
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x86.ActiveCfg = Release|Win32
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

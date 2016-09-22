@@ -145,7 +145,7 @@ Template( ) bas_matrix(unsigned r, unsigned c):
 {
 	if (row == 0 && col == 0)return;
 	data = new T[row*col];
-	memset(data, 0, sizeof(T)*row*col);
+	re(i, row*col)data[i] = T();
 	row_p = new T*[row];
 	re(i, row)
 		row_p[i] = data + col*i;
