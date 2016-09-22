@@ -31,9 +31,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cmatrix.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="complex.h">
       <Filter>头文件</Filter>
     </ClInclude>

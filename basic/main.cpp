@@ -25,7 +25,7 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
-#include "matrix.h"
+#include "bas_matrix.h"
 #include <iomanip>
 using namespace std;
 #undef re
@@ -35,12 +35,12 @@ using namespace std;
 
 void test()
 {
-	matrix one,two;
+	Matrix<double> one,two;
 	cin >> one>>two;
 	cout << one << endl;
 	cout << two << endl;
 	cout << one << endl;
-	matrix ans = one.solve(two);
+	Matrix<double> ans = one.solve(two);
 	cout << ans << endl;
 
 }
@@ -57,9 +57,9 @@ int main()
 	try {
 		/*Ö÷º¯Êý*/
 		//test();
-		const unsigned n = 10;
-		matrix A(n, n);
-		matrix B(n, 1);
+		const unsigned n = 3;
+		Matrix<double> A(n, n);
+		Matrix<double> B(n, 1);
 		B[0][0] = 7;
 		re(i,n)
 		{
@@ -74,11 +74,11 @@ int main()
 		B[0][n-1] = 14;
 		cout << A << endl;
 		//A.LU();
-		cout << A.inverse() << endl;
-		matrix P(A.ChosenLU());
+		cout << A.inverse()*A << endl;
+		//matrix P(A.ChosenLU());
 		//cout << A.ChosenLU() << endl;
 		//cout << A << endl;
-		cout <<setprecision(15)<< A.LU_solve(P*B) << endl;;
+		//cout <<setprecision(15)<< A.LU_solve(P*B) << endl;;
 		//cout << B << endl;
 	}
 	catch (const char * error) { cout << error << endl; }

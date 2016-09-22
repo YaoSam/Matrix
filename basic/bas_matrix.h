@@ -75,8 +75,8 @@ public:
 	deri_matrix& LU();
 	deri_matrix ChosenLU();
 	deri_matrix solve(const deri_matrix& input)const;
-	deri_matrix LU_solve(const deri_matrix& input)const;
-	deri_matrix inverse()const;
+	deri_matrix LU_solve(const deri_matrix& input)const;//当矩阵已经进行LU分解时直接用来求解。
+	deri_matrix inverse()const;//基于ChosenLU()的求逆。
 	virtual ~bas_matrix();
 };
 
@@ -381,3 +381,15 @@ Template()~bas_matrix()
 {
 	release();
 }
+
+template<class value_type>
+class Matrix:public bas_matrix<Matrix<value_type>,value_type>
+{
+	typedef value_type T;
+public:
+	Matrix(unsigned r, unsigned c) :bas_matrix(r, c) {}
+	Matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
+	Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
+	Matrix(const Matrix& other) :bas_matrix(other) {}
+	~Matrix() {};
+};

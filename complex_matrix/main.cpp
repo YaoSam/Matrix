@@ -25,7 +25,8 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
-#include "cmatrix.h"
+#include "../basic/bas_matrix.h"
+#include "complex.h"
 #include <iomanip>
 using namespace std;
 #undef re
@@ -44,9 +45,10 @@ int main()
 #endif
 	try {
 		/*Ö÷º¯Êý*/
-		cmatrix one,two;
+		Matrix<complex> one,two;
 		cin >> one >> two;
 		cout << one << endl;
+		cout << one.inverse()*one << endl;
 		cout << two << endl;
 		cout <<setprecision(10)<< one.solve(two) << endl;
 		cout << one.ChosenLU() << endl << one << endl;
