@@ -35,14 +35,22 @@ using namespace std;
 
 void test()
 {
-	Matrix<double> one,two;
-	cin >> one>>two;
-	cout << one << endl;
-	cout << two << endl;
-	cout << one << endl;
-	Matrix<double> ans = one.solve(two);
-	cout << ans << endl;
-
+	Matrix<double> temp;
+	cin >> temp;
+	cout << (temp * temp) << endl;
+	unsigned m = 1024, n = 1024;
+	Matrix<double> one(m,n),two(n,m);
+	re(i, m)
+		re(j, n)
+	{
+		one[i][j] = rand();
+		two[j][i] = rand();
+	}
+	clock_t BeginTime = clock();
+	one = one*two;
+	cout << "测试时间:::" << clock() - BeginTime << endl;
+	cout << m << " " << n << " " << m*n*m << endl;
+	//cout << one<< endl;
 }
 
 int main()
@@ -56,7 +64,7 @@ int main()
 #endif
 	try {
 		/*主函数*/
-		//test();
+		test();
 		const unsigned n = 3;
 		Matrix<double> A(n, n);
 		Matrix<double> B(n, 1);

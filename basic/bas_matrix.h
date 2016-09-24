@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <iostream>
+#include <vector>
+#include<thread>
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
@@ -7,7 +9,7 @@ using namespace std;
 #define Template(return_type)  \
 	template<class deri_matrix, class value_type> \
 	return_type bas_matrix<deri_matrix, value_type>:: 
-
+const unsigned thread_num = 4;
 
 template<class deri_matrix, class value_type>
 class bas_matrix
@@ -17,6 +19,7 @@ protected:
 	T*data;
 	T**row_p;
 	unsigned row, col;
+	void static dot_product(T (&ans), T** a, T** b, unsigned r, unsigned c, unsigned num);
 	void ExchangeR(unsigned r1, unsigned r2)const//交换r1,r1行
 	{
 		swap(row_p[r1], row_p[r2]);
@@ -38,7 +41,7 @@ public:
 	bas_matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0);
 	bas_matrix(T *Data, unsigned r = 0, unsigned c = 0);
 	bas_matrix(const bas_matrix& other);
-	deri_matrix& operator=(const deri_matrix &other);
+	deri_matrix& operator=(const bas_matrix & other);
 	T *const operator[](unsigned r) { return row_p[r]; }
 	const T*const operator[](unsigned r)const { return row_p[r]; }
 	friend ostream& operator<<(ostream& out, const deri_matrix& me)
@@ -136,7 +139,7 @@ Template(deri_matrix) one(unsigned n)
 {
 	deri_matrix ans(n, n);
 	re(i, n)
-		ans.row_p[i][i] = 1;
+		ans.irow_p[i][i] = 1;
 	return ans;
 }
 
@@ -185,10 +188,10 @@ Template( ) bas_matrix(const bas_matrix & other) :
 		row_p[i] = data + (other.row_p[i] - other.data);
 }
 
-Template(deri_matrix &) operator=(const deri_matrix & other)
+Template(deri_matrix &) operator=(const bas_matrix & other)
 {
 	if (this == &other)
-		return *this;
+		return static_cast<deri_matrix&>(*this);
 	if (row != other.row || col != other.col)//形状相同的时候直接复制即可。
 	{
 		release();
@@ -217,18 +220,26 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 {
 	if (other.row != col)
 		throw "size is not right!!!";
-	T* temp_data = new T[row*col];
+	T* temp_data = new T[row*other.col];
 	T** temp_row_p = new T*[row];
-	re(i, row)
+	//多线程
+	vector<thread> Thread;
+	re(thread_i, thread_num)
+		Thread.push_back(thread([this, &other, temp_row_p, temp_data, &thread_i]()
 	{
-		temp_row_p[i] = temp_data + col*i;
-		re(j, other.col)
+		for (unsigned i = (thread_i)*row / thread_num; i < (thread_i + 1)*row / thread_num; i++)
 		{
-			temp_row_p[i][j] = 0;
-			re(k, col)
-				temp_row_p[i][j] += row_p[i][k] * other.row_p[k][j];
+			temp_row_p[i] = temp_data + other.col*i;
+			re(j, other.col)
+			{
+				temp_row_p[i][j] = 0;
+				re(k, col)//点乘
+					temp_row_p[i][j] += row_p[i][k] * other.row_p[k][j];
+			}
 		}
-	}
+	}));
+	for (auto& i : Thread)
+		i.join();
 	release();
 	data = temp_data;
 	row_p = temp_row_p;
@@ -252,10 +263,17 @@ Template(deri_matrix) operator*(const deri_matrix & other) const
 	if (other.row != col)
 		throw "size is not right!!!";
 	deri_matrix ans(row, other.col);
-	re(i, row)
-		re(j, other.col)
-			re(k, col)
-				ans.row_p[i][j] += row_p[i][k] * other.row_p[k][j];
+	vector<thread> Thread;
+	re(thread_i, thread_num)
+		Thread.push_back(thread([this, &other, &ans,thread_i]()
+	{
+		for (unsigned i = (thread_i)*row / thread_num; i < (thread_i + 1)*row / thread_num; i++)
+			re(j, other.col)
+				re(k, col)//点乘
+					ans.row_p[i][j] += row_p[i][k] * other.row_p[k][j];
+	}));
+	for (auto& i : Thread)
+		i.join();
 	return ans;
 }
 
@@ -265,15 +283,15 @@ Template(deri_matrix &) LU()//必须定义除法
 	T coefficient = 0;
 	re(i, min)
 	{
+		if (row_p[i][i] == 0)
+			throw "can't be 0";
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			if (row_p[i][i] == 0)
-				throw "can't be 0";
 			if (row_p[j][i] == 0)
 				continue;
 			coefficient = 0 - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = 0-coefficient;
+			row_p[j][i] = 0 - coefficient;
 		}
 	}
 	return static_cast<deri_matrix&>(*this);
@@ -287,22 +305,25 @@ Template(deri_matrix) ChosenLU()
 	unsigned min = (row < col ? row : col) - 1, max = 0;//max:最大的行的序号。
 	T coefficient = 0;
 	re(i, min)
+	{
+		//相对于LU多了这一部分。
+		max = find_MaxInCol(i, i);
+		if (max != i)
+		{
+			P.ExchangeR(i, max);
+			ExchangeR(i, max);
+		}
+		if (row_p[i][i] == 0)
+			throw "can't be 0";
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			max = find_MaxInCol(i, i);
-			if (max != i)
-			{
-				P.ExchangeR(i, max);
-				ExchangeR(i, max);
-			}
-			if (row_p[i][i] == 0)
-				throw "can't be 0";
 			if (row_p[j][i] == 0)
 				continue;
 			coefficient = 0 - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = 0-coefficient;
+			row_p[j][i] = 0 - coefficient;
 		}
+	}
 	return P;
 }
 
@@ -393,3 +414,10 @@ public:
 	Matrix(const Matrix& other) :bas_matrix(other) {}
 	~Matrix() {};
 };
+
+Template(void) dot_product(T (&ans),T ** a, T ** b, unsigned r, unsigned c,unsigned num)
+{
+	ans = T();
+	re(i, num)
+		ans += a[r][i] * b[i][c];
+}
