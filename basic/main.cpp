@@ -30,15 +30,9 @@
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
-#define DEBUG
-
-
 void test()
 {
-	Matrix<double> temp;
-	cin >> temp;
-	cout << (temp * temp) << endl;
-	unsigned m = 1024, n = 1024;
+	unsigned m = 512, n = 512;
 	Matrix<double> one(m,n),two(n,m);
 	re(i, m)
 		re(j, n)
@@ -52,18 +46,22 @@ void test()
 	cout << m << " " << n << " " << m*n*m << endl;
 	//cout << one<< endl;
 }
-
+extern unsigned thread_num;
 int main()
 {
 	clock_t BeginTime = clock();
 	srand(unsigned(time(NULL)));
-#ifdef DEBUG
+#ifdef _DEBUG
 	FILE *input, *output; //没用的指针... ...
 	freopen_s(&input, "in.txt", "r", stdin);
 	freopen_s(&output, "out.txt", "w", stdout);
 #endif
 	try {
 		/*主函数*/
+		//Matrix<double> temp;
+		//cin >> temp;
+		//cout << (temp * temp) << endl;
+		cout << thread_num << endl;
 		test();
 		const unsigned n = 3;
 		Matrix<double> A(n, n);
@@ -91,7 +89,7 @@ int main()
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
-#ifndef DEBUG
+#ifndef _DEBUG
 	system("pause");
 #endif // !DEBUG
 	return 0;

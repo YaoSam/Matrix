@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include<thread>
+#include <windows.h>
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
@@ -9,11 +10,17 @@ using namespace std;
 #define Template(return_type)  \
 	template<class deri_matrix, class value_type> \
 	return_type bas_matrix<deri_matrix, value_type>:: 
-const unsigned thread_num = 4;
-
+inline unsigned process_num()
+{
+	SYSTEM_INFO info;
+	GetSystemInfo(&info);
+	return info.dwNumberOfProcessors;
+}
 template<class deri_matrix, class value_type>
 class bas_matrix
 {
+private:
+
 protected:
 	typedef value_type T;
 	T*data;
@@ -143,7 +150,7 @@ Template(deri_matrix) one(unsigned n)
 	return ans;
 }
 
-Template( ) bas_matrix(unsigned r, unsigned c):
+Template() bas_matrix(unsigned r, unsigned c):
 	data(nullptr), row_p(nullptr), row(r), col(c)
 {
 	if (row == 0 && col == 0)return;
@@ -154,7 +161,7 @@ Template( ) bas_matrix(unsigned r, unsigned c):
 		row_p[i] = data + col*i;
 }
 
-Template( ) bas_matrix(T ** Data, unsigned r, unsigned c) :
+Template() bas_matrix(T ** Data, unsigned r, unsigned c) :
 	data(nullptr), row_p(nullptr), row(r), col(c)
 {
 	if (row == 0 || col == 0)return;
@@ -167,7 +174,7 @@ Template( ) bas_matrix(T ** Data, unsigned r, unsigned c) :
 	}
 }
 
-Template( ) bas_matrix(T * Data, unsigned r, unsigned c) :
+Template() bas_matrix(T * Data, unsigned r, unsigned c) :
 	data(nullptr), row_p(nullptr), row(r), col(c)
 {
 	if (Data == nullptr)return;
@@ -178,7 +185,7 @@ Template( ) bas_matrix(T * Data, unsigned r, unsigned c) :
 		row_p[i] = data + col*i;
 }
 
-Template( ) bas_matrix(const bas_matrix & other) :
+Template() bas_matrix(const bas_matrix & other) :
 	data(nullptr), row_p(nullptr), row(other.row), col(other.col)
 {
 	data = new T[row*col];
@@ -372,6 +379,7 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	}
 	return ans;
 }
+
 Template(deri_matrix) inverse() const
 {
 	if (col != row)
@@ -414,10 +422,3 @@ public:
 	Matrix(const Matrix& other) :bas_matrix(other) {}
 	~Matrix() {};
 };
-
-Template(void) dot_product(T (&ans),T ** a, T ** b, unsigned r, unsigned c,unsigned num)
-{
-	ans = T();
-	re(i, num)
-		ans += a[r][i] * b[i][c];
-}
