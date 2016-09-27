@@ -16,6 +16,7 @@ inline unsigned process_num()
 	GetSystemInfo(&info);
 	return info.dwNumberOfProcessors;
 }
+extern unsigned int thread_num;
 template<class deri_matrix, class value_type>
 class bas_matrix
 {
@@ -82,6 +83,7 @@ public:
 	deri_matrix& operator*=(const deri_matrix& other);
 	deri_matrix operator+(const deri_matrix& other)const;
 	deri_matrix operator*(const deri_matrix& other)const;
+	bool operator==(const deri_matrix& other)const;
 	deri_matrix& LU();
 	deri_matrix ChosenLU();
 	deri_matrix solve(const deri_matrix& input)const;
@@ -229,20 +231,23 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 		throw "size is not right!!!";
 	T* temp_data = new T[row*other.col];
 	T** temp_row_p = new T*[row];
+	re(i,row)temp_row_p[i]= temp_data + other.col*i;
 	//多线程
 	vector<thread> Thread;
-	re(thread_i, thread_num)
-		Thread.push_back(thread([this, &other, temp_row_p, temp_data, &thread_i]()
+	const unsigned &n = thread_num;
+	re(i,thread_num)
+		Thread.push_back(thread([this,&other,temp_row_p,temp_data,i,n]()
 	{
-		for (unsigned i = (thread_i)*row / thread_num; i < (thread_i + 1)*row / thread_num; i++)
+		unsigned max_r = (i + 1)*row*other.col / n / row, max_c = ((i + 1)*row*other.col / n) % other.col;
+		for (unsigned r = i*row*other.col / n / row, c = (i*row*other.col / n) % other.col;
+			r*row+c<(i+1)*row*other.col/n;)
 		{
-			temp_row_p[i] = temp_data + other.col*i;
-			re(j, other.col)
-			{
-				temp_row_p[i][j] = 0;
-				re(k, col)//点乘
-					temp_row_p[i][j] += row_p[i][k] * other.row_p[k][j];
-			}
+			temp_row_p[r][c] = 0;
+			re(k, col)//点乘
+				temp_row_p[r][c] += row_p[r][k] * other.row_p[k][c];
+			c++;
+			if (c == other.col)
+				c = 0, r++;
 		}
 	}));
 	for (auto& i : Thread)
@@ -271,17 +276,36 @@ Template(deri_matrix) operator*(const deri_matrix & other) const
 		throw "size is not right!!!";
 	deri_matrix ans(row, other.col);
 	vector<thread> Thread;
-	re(thread_i, thread_num)
-		Thread.push_back(thread([this, &other, &ans,thread_i]()
+	const unsigned &n = thread_num;
+	re(i, thread_num)
+		Thread.push_back(thread([this, &other,&ans, i, n]()
 	{
-		for (unsigned i = (thread_i)*row / thread_num; i < (thread_i + 1)*row / thread_num; i++)
-			re(j, other.col)
-				re(k, col)//点乘
-					ans.row_p[i][j] += row_p[i][k] * other.row_p[k][j];
+		unsigned max_r = (i + 1)*row*other.col / n / row, max_c = ((i + 1)*row*other.col / n) % other.col;
+		for (unsigned r = i*row*other.col / n / row, c = (i*row*other.col / n) % other.col;
+			n*(r*row + c)<(i + 1)*row*other.col;)
+		{
+			ans.row_p[r][c] = 0;
+			re(k, col)//点乘
+				ans.row_p[r][c] += row_p[r][k] * other.row_p[k][c];
+			c++;
+			if (c == other.col)
+				c = 0, r++;
+		}
 	}));
 	for (auto& i : Thread)
 		i.join();
 	return ans;
+}
+
+Template(bool) operator==(const deri_matrix& other)const
+{
+	if (other.row != row || col != other.col)
+		return false;
+	re(i,row)
+		re(j,col)
+		if (other.row_p[i][j] != row_p[i][j])
+			return false;
+	return true;
 }
 
 Template(deri_matrix &) LU()//必须定义除法
