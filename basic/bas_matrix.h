@@ -47,7 +47,6 @@ protected:
 public:
 	bas_matrix(unsigned r, unsigned c);
 	bas_matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0);
-	bas_matrix(T *Data, unsigned r = 0, unsigned c = 0);
 	bas_matrix(const bas_matrix& other);
 	deri_matrix& operator=(const bas_matrix & other);
 	T *const operator[](unsigned r) { return row_p[r]; }
@@ -174,17 +173,6 @@ Template() bas_matrix(T ** Data, unsigned r, unsigned c) :
 		row_p[i] = data + i*col;
 		memcpy(row_p[i], Data[i], sizeof(T)*row);
 	}
-}
-
-Template() bas_matrix(T * Data, unsigned r, unsigned c) :
-	data(nullptr), row_p(nullptr), row(r), col(c)
-{
-	if (Data == nullptr)return;
-	data = new T[row*col];
-	row_p = new T*[row];
-	memcpy(data, Data, sizeof(T)*r*c);
-	re(i, row)
-		row_p[i] = data + col*i;
 }
 
 Template() bas_matrix(const bas_matrix & other) :
