@@ -21,7 +21,7 @@ T gcd(T a, T b)
 template<class T> bool operator<(const T&a, const T&b) { return !(a > b || a == b); }
 template<class T> bool operator>=(const T&a, const T&b) { return (a > b || a == b); }
 template<class T> bool operator<=(const T&a, const T&b) { return !a > b; }
-template<class T> bool operator!=(const T&a, const T&b) { return !a == b; }
+template<class T> bool operator!=(const T&a, const T&b) { return !(a == b); }
 
 class natural_num
 {

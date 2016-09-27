@@ -32,7 +32,6 @@ using namespace std;
 #define re(i,n) for(unsigned int i=0;i<n;i++)
 #define DEBUG
 
-
 int main()
 {
 	clock_t BeginTime = clock();
@@ -58,6 +57,10 @@ int main()
 		Matrix<N> one(a, m, n);
 		cout << one << endl;
 		cout << one.inverse() << endl;
+		cout << one*one << endl;
+		cout << (one*one).inverse() << endl;
+		cout << one.inverse()*one.inverse() << endl;
+
 			//cout << a << " " << b << " " << gcd(a, b)<<endl;
 	}
 	catch (const char * error) { cout << error << endl; }
