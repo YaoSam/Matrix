@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Matrix_Natvis.natvis = Matrix_Natvis.natvis
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SymmetricMatrix", "SymmetricMatrix\SymmetricMatrix.vcxproj", "{8A2D5869-62BE-40D0-AF62-14490A6A18D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -76,6 +78,14 @@ Global
 		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x64.Build.0 = Release|x64
 		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x86.ActiveCfg = Release|Win32
 		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A}.Release|x86.Build.0 = Release|Win32
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Debug|x64.ActiveCfg = Debug|x64
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Debug|x64.Build.0 = Debug|x64
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Debug|x86.ActiveCfg = Debug|Win32
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Debug|x86.Build.0 = Debug|Win32
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Release|x64.ActiveCfg = Release|x64
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Release|x64.Build.0 = Release|x64
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Release|x86.ActiveCfg = Release|Win32
+		{8A2D5869-62BE-40D0-AF62-14490A6A18D4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
