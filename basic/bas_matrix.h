@@ -17,6 +17,8 @@ inline unsigned process_num()
 	return info.dwNumberOfProcessors;
 }
 extern unsigned int thread_num;
+
+template<class T> class sys_matrix;
 template<class deri_matrix, class value_type>
 class bas_matrix
 {
@@ -299,7 +301,7 @@ Template(bool) operator==(const deri_matrix& other)const
 Template(deri_matrix &) LU()//必须定义除法
 {
 	unsigned min = (row < col ? row : col) - 1;//提前-1.最后一行不用处理。
-	T coefficient = 0;
+	T coefficient = T(0);
 	re(i, min)
 	{
 		if (row_p[i][i] == 0)
@@ -308,9 +310,9 @@ Template(deri_matrix &) LU()//必须定义除法
 		{
 			if (row_p[j][i] == 0)
 				continue;
-			coefficient = 0 - row_p[j][i] / row_p[i][i];
+			coefficient = T(0) - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = 0 - coefficient;
+			row_p[j][i] = T(0) - coefficient;
 		}
 	}
 	return static_cast<deri_matrix&>(*this);
@@ -432,5 +434,11 @@ public:
 	Matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(const Matrix& other) :bas_matrix(other) {}
+	Matrix(const sys_matrix<T>& other);
 	~Matrix() {};
 };
+
+template<class value_type>
+inline Matrix<value_type>::Matrix(const sys_matrix<T>& other)
+{
+}

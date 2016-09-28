@@ -12,7 +12,8 @@
   </Type>
 
   <Type Name="Matrix&lt;*&gt;">
-      <DisplayString>{{row = {row},col={col}}}</DisplayString>
+    <AlternativeType Name="sys_matrix&lt;*&gt;"/>
+    <DisplayString>{{row = {row},col={col}}}</DisplayString>
       <Expand>
         <IndexListItems>
           <Size>row*col</Size>
@@ -20,4 +21,5 @@
         </IndexListItems>
       </Expand>
   </Type>
+
 </AutoVisualizer>

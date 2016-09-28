@@ -27,16 +27,16 @@ class natural_num
 {
 	long long up, down;
 public:
-	natural_num(const ll &a=0,const ll &b=1):up(0),down(0)
+	natural_num(const ll &a=0,const ll &b=1):up(0),down(1)
 	{
 		create(a, b);
-		fix_sign();
 	}
 	void create(const ll&a=0,const ll&b=1)
 	{
 		ll temp = gcd(a, b);
 		up = a / temp;
 		down = b / temp;
+		fix_sign();
 	}
 	void fix_sign()
 	{
@@ -55,7 +55,6 @@ public:
 		ll a, b;
 		in >> a >> b;
 		me.create(a, b);
-		me.fix_sign();
 		return in;
 	}
 	natural_num& operator+=(const natural_num& other)
@@ -78,13 +77,12 @@ public:
 		if (other.up == 0)
 			throw "²»ÄÜ³ı";
 		create(up*other.down, down*other.up);
-		fix_sign();
 		return *this;
 	}
-	friend natural_num inline operator+(const natural_num& a,const natural_num& other);
-	friend natural_num inline operator-(const natural_num& a,const natural_num& other);
-	friend natural_num inline operator*(const natural_num& a,const natural_num& other);
-	friend natural_num inline operator/(const natural_num& a,const natural_num& other);
+	friend natural_num operator+(const natural_num& a, const natural_num& other) { return natural_num(a) += other; }
+	friend natural_num operator-(const natural_num& a, const natural_num& other) { return natural_num(a) -= other; }
+	friend natural_num operator*(const natural_num& a, const natural_num& other) { return natural_num(a) *= other; }
+	friend natural_num operator/(const natural_num& a, const natural_num& other) { return natural_num(a) /= other; }
 	bool operator==(const natural_num& other)const
 	{
 		return up == other.up&&down == other.down;
@@ -95,28 +93,8 @@ public:
 	}
 	friend double abs(const natural_num& other)
 	{
-		return double(other.up) / double(other.down);
+		return abs(double(other.up) / double(other.down));
 	}
 };
 
-natural_num inline operator+(const natural_num& a, const natural_num& other)
-{
-	natural_num ans(a);
-	return ans += other;
-}
-natural_num inline operator-(const natural_num& a, const natural_num& other)
-{
-	natural_num ans(a);
-	return  ans -= other;
-}
-natural_num inline operator*(const natural_num& a, const natural_num& other)
-{
-	natural_num ans(a);
-	return ans *= other;
-}
-natural_num inline operator/(const natural_num& a, const natural_num& other)
-{
-	natural_num ans(a);
-	return ans /= other;
-}
 typedef natural_num N;
