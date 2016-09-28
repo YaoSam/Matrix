@@ -25,6 +25,8 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
+#include "SymmetricMatrix.h"
+#include "../自然数/n.h"
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
@@ -42,9 +44,26 @@ int main()
 #endif
 	try {
 		/*主函数*/
+		ll data[1000];
+		N Data[1000];
+		unsigned n;
+		cin >> n;
+		re(i, n*(n+1)/2)
+		{
+			cin >> data[i];
+			Data[i] = N(data[i], 1);
+		}
+		//for (auto&i : data)
+			//cout<<(i = &i-data+1)<<" ";
 
-
-
+		//re(i, 10)
+		{
+			sys_matrix<N> one(Data, n);
+			cout << one << endl;
+			sys_matrix<N> two(one);
+			cout << two.LU() << endl;
+			cout<<one.Cholesky()<<endl;
+		}
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;

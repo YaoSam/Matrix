@@ -116,6 +116,9 @@
     <Text Include="in.txt" />
     <Text Include="out.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="SymmetricMatrix.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
