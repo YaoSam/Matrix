@@ -16,7 +16,7 @@ inline unsigned process_num()
 	GetSystemInfo(&info);
 	return info.dwNumberOfProcessors;
 }
-extern unsigned int thread_num;
+extern unsigned thread_num;
 
 template<class T> class sys_matrix;
 template<class deri_matrix, class value_type>
@@ -180,6 +180,8 @@ Template() bas_matrix(T ** Data, unsigned r, unsigned c) :
 Template() bas_matrix(const bas_matrix & other) :
 	data(nullptr), row_p(nullptr), row(other.row), col(other.col)
 {
+	if (row == 0 || col == 0)
+		return;
 	data = new T[row*col];
 	row_p = new T*[row];
 	memcpy(data, other.data, sizeof(T)*row*col);
@@ -196,8 +198,11 @@ Template(deri_matrix &) operator=(const bas_matrix & other)
 		release();
 		row = other.row;
 		col = other.col;
-		data = new T[row*col];
-		row_p = new T*[row];
+		if(row!=0&&col!=0)
+		{
+			data = new T[row*col];
+			row_p = new T*[row];
+		}
 	}
 	memcpy(data, other.data, sizeof(T)*row*col);
 	re(i, row)
@@ -228,17 +233,10 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 	re(i,thread_num)
 		Thread.push_back(thread([this,&other,temp_row_p,temp_data,i,n]()
 	{
-		unsigned max_r = (i + 1)*row*other.col / n / row, max_c = ((i + 1)*row*other.col / n) % other.col;
-		for (unsigned r = i*row*other.col / n / row, c = (i*row*other.col / n) % other.col;
-			r*row+c<(i+1)*row*other.col/n;)
-		{
-			temp_row_p[r][c] = 0;
-			re(k, col)//点乘
-				temp_row_p[r][c] += row_p[r][k] * other.row_p[k][c];
-			c++;
-			if (c == other.col)
-				c = 0, r++;
-		}
+		for (unsigned j = i; j < row; j += n)
+			re(k, other.col)
+			re(l, col)
+			temp_row_p[j][k] = row_p[j][l] * other.row_p[l][k];
 	}));
 	for (auto& i : Thread)
 		i.join();
@@ -270,16 +268,11 @@ Template(deri_matrix) operator*(const deri_matrix & other) const
 	re(i, thread_num)
 		Thread.push_back(thread([this, &other,&ans, i, n]()
 	{
-		unsigned max_r = (i + 1)*row*other.col / n / row, max_c = ((i + 1)*row*other.col / n) % other.col;
-		for (unsigned r = i*row*other.col / n / row, c = (i*row*other.col / n) % other.col;
-			n*(r*row + c)<(i + 1)*row*other.col;)
+		for (int j = i; j < row; j += n)
 		{
-			ans.row_p[r][c] = 0;
-			re(k, col)//点乘
-				ans.row_p[r][c] += row_p[r][k] * other.row_p[k][c];
-			c++;
-			if (c == other.col)
-				c = 0, r++;
+			re(k, other.col)
+				re(l, col)
+				ans.row_p[j][k] += row_p[j][l] * other.row_p[l][k];
 		}
 	}));
 	for (auto& i : Thread)
@@ -434,11 +427,5 @@ public:
 	Matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(const Matrix& other) :bas_matrix(other) {}
-	Matrix(const sys_matrix<T>& other);
 	~Matrix() {};
 };
-
-template<class value_type>
-inline Matrix<value_type>::Matrix(const sys_matrix<T>& other)
-{
-}
