@@ -245,3 +245,5 @@ ModelManifest.xml
 .fake/
 *.zip
 /自然数/out.txt
+*.diagsession
+/高精度/out.txt

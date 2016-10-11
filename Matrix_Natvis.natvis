@@ -21,5 +21,9 @@
         </IndexListItems>
       </Expand>
   </Type>
-
+  <Type Name="bignum">
+    <!--<DisplayString>{{length={length},sign={sign}}}</DisplayString>-->
+    <DisplayString Condition="length>0">{{length={length},sign={sign},{data,hv}}}</DisplayString>
+    <DisplayString Condition="length==0">0</DisplayString>
+  </Type>
 </AutoVisualizer>

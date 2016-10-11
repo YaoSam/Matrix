@@ -110,13 +110,18 @@ Template(void) RowAmutiply(unsigned a, T coefficient) const
 	re(i, col)
 		row_p[a][i] *= coefficient;
 }
-
+template<class T>
+bool abs_cmp(const T& a,const T&b)
+{
+	return abs(a) > abs(b);
+}
 Template(unsigned) find_MaxInCol(unsigned c, unsigned under) const//必须定义abs
 {
 	unsigned ans = under;
 	T current_max = row_p[under][c];
 	for (unsigned i = under + 1; i < row; i++)
-		if (abs(row_p[i][c])>abs(current_max))
+		if(abs_cmp(row_p[i][c], current_max))
+		//if (abs(row_p[i][c])>abs(current_max))
 		{
 			current_max = row_p[i][c];
 			ans = i;
@@ -139,7 +144,8 @@ Template(void) apply_unsafe(unsigned m, unsigned n)
 {
 	row = m, col = n;
 	data = new T[row*col];
-	memset(data, 0, sizeof(T)*col*row);
+	re(i, row*col)
+		data[i] = T();
 	row_p = new T*[row];
 	re(i, row)
 		row_p[i] = data + col*i;
@@ -173,7 +179,9 @@ Template() bas_matrix(T ** Data, unsigned r, unsigned c) :
 	re(i, row)
 	{
 		row_p[i] = data + i*col;
-		memcpy(row_p[i], Data[i], sizeof(T)*row);
+		re(j, col)
+			row_p[i][j] = Data[i][j];
+		//memcpy(row_p[i], Data[i], sizeof(T)*row);
 	}
 }
 
@@ -184,7 +192,9 @@ Template() bas_matrix(const bas_matrix & other) :
 		return;
 	data = new T[row*col];
 	row_p = new T*[row];
-	memcpy(data, other.data, sizeof(T)*row*col);
+	re(i, row*col)
+		data[i] = other.data[i];
+	//memcpy(data, other.data, sizeof(T)*row*col);
 	re(i, row)//整体位移。
 		row_p[i] = data + (other.row_p[i] - other.data);
 }
@@ -204,7 +214,9 @@ Template(deri_matrix &) operator=(const bas_matrix & other)
 			row_p = new T*[row];
 		}
 	}
-	memcpy(data, other.data, sizeof(T)*row*col);
+	//memcpy(data, other.data, sizeof(T)*row*col);
+	re(i, row*col)
+		data[i] = other.data[i];
 	re(i, row)
 		row_p[i] = data + (other.row_p[i] - other.data);
 	return static_cast<deri_matrix&>(*this);
@@ -297,11 +309,11 @@ Template(deri_matrix &) LU()//必须定义除法
 	T coefficient = T(0);
 	re(i, min)
 	{
-		if (row_p[i][i] == 0)
+		if (row_p[i][i] == T(0))
 			throw "can't be 0";
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			if (row_p[j][i] == 0)
+			if (row_p[j][i] == T(0))
 				continue;
 			coefficient = T(0) - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
@@ -315,7 +327,7 @@ Template(deri_matrix) ChosenLU()
 {
 	deri_matrix P(row, row);
 	re(i, row)
-		P.row_p[i][i] = 1;
+		P.row_p[i][i] = T(1);
 	unsigned min = (row < col ? row : col) - 1, max = 0;//max:最大的行的序号。
 	T coefficient = 0;
 	re(i, min)
@@ -327,15 +339,15 @@ Template(deri_matrix) ChosenLU()
 			P.ExchangeR(i, max);
 			ExchangeR(i, max);
 		}
-		if (row_p[i][i] == 0)
+		if (row_p[i][i] == T(0))
 			throw "can't be 0";
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			if (row_p[j][i] == 0)
+			if (row_p[j][i] == T(0))
 				continue;
-			coefficient = 0 - row_p[j][i] / row_p[i][i];
+			coefficient = T(0) - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = 0 - coefficient;
+			row_p[j][i] = T(0) - coefficient;
 		}
 	}
 	return P;
@@ -401,9 +413,9 @@ Template(deri_matrix) inverse() const
 			for (unsigned k = 0; k + 1 <= i; k++)
 				temp += me.row_p[i][k] * ans.row_p[k][j];
 			ans.row_p[i][j] = b.row_p[i][j] - temp;
-			temp = 0;//temp不能忘了重置。
+			temp = T(0);//temp不能忘了重置。
 		}
-		for (int i = row - 1; i >= 0; i--, temp = 0)
+		for (int i = row - 1; i >= 0; i--, temp = T(0))
 		{
 			for (unsigned k = i + 1; k < row; k++)
 				temp += me.row_p[i][k] * ans.row_p[k][j];
