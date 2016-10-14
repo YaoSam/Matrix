@@ -89,7 +89,8 @@ public:
 	}
 	friend ostream& operator<<(ostream& out, const natnum& me)
 	{
-		return me.down == 1 ? (out << me.up) : (out << me.up << '/' << me.down);
+		static bignum one("1");
+		return me.down == one ? (out << me.up) : (out << me.up << '/' << me.down);
 	}
 	natnum& operator+=(const natnum& other)
 	{

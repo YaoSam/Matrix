@@ -1,11 +1,13 @@
 #include "bignum.h"
 #include <iostream>
+#include <vector>
 const int ten[6] = { 1,10,100,1000,10000,100000 };
 bignum Plus(const bignum& a, const bignum& b)
 {
 	bignum ans;
 	ans.length = (a.length > b.length ? a.length : b.length) + 1;
 	ans.data = new int[ans.length];
+	ans.sign = a.sign;
 	memset(ans.data, 0, sizeof(int)*ans.length);
 	memcpy(ans.data, a.data, sizeof(int)*a.length);
 	re(i, b.length)
@@ -29,12 +31,15 @@ bignum Subtract(const bignum& a, const bignum& b)
 	bignum ans;
 	ans.sign = a.sign;
 	ans.length = a.length > b.length ? a.length : b.length;
+	int origin_len = ans.length;
 	ans.data = new int[ans.length];
 	memset(ans.data, 0, sizeof(int)*ans.length);
 	//相减（data
 	memcpy(ans.data, a.data, sizeof(int)*a.length);
 	re(i, b.length)
+	{
 		ans.data[i] -= b.data[i];
+	}
 	//调整符号（sign
 	re(i, ans.length)//找到第一个不为零的数，
 	{
@@ -52,7 +57,6 @@ bignum Subtract(const bignum& a, const bignum& b)
 			break;
 		}
 	}
-	//补位
 	re(i, ans.length)
 	{
 		if (ans.data[i]<0)
@@ -67,13 +71,16 @@ bignum Subtract(const bignum& a, const bignum& b)
 		if (ans.data[ans.length - i - 1] > 0)
 		{
 			ans.length -= i;
-			int *temp_data = new int[ans.length];
-			memcpy(temp_data, ans.data, sizeof(int)*ans.length);
-			delete[]ans.data;
-			ans.data = temp_data;
+			if(origin_len>ans.length)//大小改变了，调整节省空间。
+			{
+				int *temp_data = new int[ans.length];
+				memcpy(temp_data, ans.data, sizeof(int)*ans.length);
+				delete[]ans.data;
+				ans.data = temp_data;
+			}
 			return ans;
 		}
-		if (i == ans.length - 1)
+		if (i == ans.length - 1)//全部皆为0
 		{
 			delete[]ans.data;
 			ans.data = nullptr;
@@ -92,14 +99,15 @@ bignum operator+(const bignum&a, const bignum&b) {
 bignum operator-(const bignum&a, const bignum&b) {
 	if (a.sign == b.sign)
 		return Subtract(a, b);
-	else
-		return Plus(a, b);
+	//if (b.sign == true)
+	return Plus(a, b);
 }
 
 bignum operator-(const bignum&a, const bignum&b);
 
 bignum operator*(const bignum& a, const bignum& b)
 {
+	static const bignum one("1"),zero("0");
 	if (a.length == 0 || b.length == 0)
 		return bignum();
 	bignum ans;
@@ -135,26 +143,39 @@ bignum operator*(const bignum& a, const bignum& b)
 
 bignum operator/(bignum a, bignum b)//TODO 除法的符号。
 {
-	static const bignum zero, one("1"), neg("-1");
+	static const bignum zero, one("1"), neg("-1"),two("2");
 	if (b == zero)throw "can't / zero!";
 	if (b == one)return a;
 	if (b == neg)return a.negative();
 	if (cmp_abs_smaller(a, b))return zero;
 	bool sign = (a.sign != b.sign);
 	b.sign = a.sign = false;
-	bignum Half(a),ans,temp; 
-	Half.half();
-	while(Half!=zero)
+	bignum ans,temp("1"),temp_b;
+	static vector<bignum> two_arr(1,temp);
+	int len=two_arr.size();
+	if (two_arr[len - 1] < a)
 	{
-		temp = Half + ans;
-		if (temp*b == a)return sign ? temp.negative() : temp;
-		if (temp*b < a)
+		while (two_arr[two_arr.size() - 1] < a)
+			two_arr.push_back(two_arr[two_arr.size() - 1] * two);
+		len = two_arr.size();
+	}
+	else
+	{
+		len--;
+		while (two_arr[len - 1] >= a)
+			len--;
+	}
+	temp_b = two_arr[len - 1] * b;
+	re(i,len)
+	{
+		if (temp_b == a)
+			return sign ? (ans + two_arr[len - i - 1]).negative() : (ans + two_arr[len - i - 1]);
+		if(temp_b<a)
 		{
-			ans = temp;
+			a -= temp_b;
+			ans += two_arr[len - i - 1];
 		}
-		else if ((temp - 1)*b <= a)//(ans+1)*b>a,ans*b<=a
-			return sign ? (temp - 1).negative() : temp - 1;
-		Half.half();
+		temp_b.half();
 	}
 	return sign ? ans.negative() : ans;
 }
@@ -285,7 +306,7 @@ bignum::bignum(const bignum & other):
 bignum & bignum::operator=(const bignum & other)
 {
 	if (this == &other)	return*this;
-	if (data != nullptr)
+	if (data != nullptr)//TODO 优化内存的申请。
 		delete[]data;
 	length = other.length;
 	sign = other.sign;
@@ -363,4 +384,3 @@ bignum gcd(bignum a, bignum b)
 		}
 	}
 }
-bignum abs(const bignum&a) { bignum ans(a); ans.sign = false; return ans; }

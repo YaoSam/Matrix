@@ -57,9 +57,9 @@ int main()
 #endif
 	try {
 		/*主函数*/
-		const unsigned n = 100;
+		const unsigned n = 40;
 		Matrix<natnum> A(n, n);
-		cout << A << endl;
+		//cout << A << endl;
 		Matrix<natnum> B(n, 1);
 		B[0][0] = bignum(7);
 		re(i,n)
@@ -74,18 +74,21 @@ int main()
 		}
 		B[0][n-1] = bignum(14);
 		cout << A << endl;
-		cout<<A.ChosenLU()<<endl;
-		cout << A << endl;
-		//cout << A.inverse()*A << endl;
+		//cout << A.inverse() << endl;
+		//cout<<A.ChosenLU()<<endl;
+		//cout << A << endl;
+		auto temp=A.inverse();
+		cout << temp << endl;
+		//cout << temp*A << endl;
 		//matrix P(A.ChosenLU());
 		//cout << A.ChosenLU() << endl;
 		//cout << A << endl;
 		//cout <<setprecision(15)<< A.LU_solve(P*B) << endl;;
 		//cout << B << endl;
-		string a,b;
-		vector<bignum> num;
-		while (cin >> a >> b)
-			cout << a << " " << b << " " << natnum(a, b) << endl;
+		//string a,b;
+		//vector<bignum> num;
+		//while (cin >> a >> b)
+		//	cout << a << " " << b << " " << natnum(a, b) << endl;
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
