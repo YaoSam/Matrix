@@ -45,7 +45,37 @@ int kgcd(int a,int b)
 		return kgcd(a / 2, b);
 	return kgcd(abs(a - b), a > b ? b : a);
 }
-
+void test()
+{
+	const unsigned n = 50;
+	Matrix<natnum> A(n, n);
+	//cout << A << endl;
+	Matrix<natnum> B(n, 1);
+	B[0][0] = bignum(7);
+	re(i, n)
+	{
+		A[i][i] = bignum(6);
+		if (i > 0)
+		{
+			A[i - 1][i] = bignum(1);
+			A[i][i - 1] = bignum(8);
+			B[0][i] = bignum(15);
+		}
+	}
+	B[0][n - 1] = bignum(14);
+	//cout << A << endl;
+	//cout << A.inverse()*B << endl;
+	//cout<<A.ChosenLU()<<endl;
+	//cout << A << endl;
+	auto temp = A.inverse();
+	//cout << temp << endl;
+	cout << temp*A << endl;
+	//auto P(A.ChosenLU());
+	//cout << A.ChosenLU() << endl;
+	//cout << A << endl;
+	//cout << A.LU_solve(P*B) << endl;;
+	//cout << B << endl;
+}
 int main()
 {
 	clock_t BeginTime = clock();
@@ -57,34 +87,7 @@ int main()
 #endif
 	try {
 		/*Ö÷º¯Êı*/
-		const unsigned n = 40;
-		Matrix<natnum> A(n, n);
-		//cout << A << endl;
-		Matrix<natnum> B(n, 1);
-		B[0][0] = bignum(7);
-		re(i,n)
-		{
-			A[i][i] = bignum(6);
-			if (i > 0)
-			{
-				A[i - 1][i] = bignum(1);
-				A[i][i - 1] = bignum(8);
-				B[0][i] = bignum(15);
-			}
-		}
-		B[0][n-1] = bignum(14);
-		cout << A << endl;
-		//cout << A.inverse() << endl;
-		//cout<<A.ChosenLU()<<endl;
-		//cout << A << endl;
-		auto temp=A.inverse();
-		cout << temp << endl;
-		//cout << temp*A << endl;
-		//matrix P(A.ChosenLU());
-		//cout << A.ChosenLU() << endl;
-		//cout << A << endl;
-		//cout <<setprecision(15)<< A.LU_solve(P*B) << endl;;
-		//cout << B << endl;
+		test();
 		//string a,b;
 		//vector<bignum> num;
 		//while (cin >> a >> b)

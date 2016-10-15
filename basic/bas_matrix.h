@@ -364,9 +364,9 @@ Template(deri_matrix)LU_solve(const deri_matrix & input) const
 		for (unsigned k = 0; k + 1 <= i; k++)
 			temp += row_p[i][k] * ans.data[k];
 		ans.data[i] = input.data[i] - temp;
-		temp = 0;//temp不能忘了重置。
+		temp = T();//temp不能忘了重置。
 	}
-	for (int i = row - 1; i >= 0; i--, temp = 0)
+	for (int i = row - 1; i >= 0; i--, temp = T())
 	{
 		for (unsigned k = i + 1; k < row; k++)
 			temp += row_p[i][k] * ans.data[k];

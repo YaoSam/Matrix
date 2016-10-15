@@ -8,13 +8,17 @@ class bignum
 {
 	friend class natnum;
 	int* data;
-	int length;
 	bool sign;
+	int length;
+	int size;
 	bignum& negative() { sign = true; return *this; }
 	friend bignum Plus(const bignum& a, const bignum& b);
+	bignum& Plus(const bignum& other);
+	bignum& Subtract(const bignum& other);
 	friend bignum Subtract(const bignum& a, const bignum& b);
+	void expend();
 public:
-	bignum():data(nullptr),length(0),sign(false){}
+	bignum():data(nullptr),length(0),sign(false),size(0){}
 	bignum(const string& num);
 	bignum(int num);
 	bignum(const bignum &other);
@@ -25,21 +29,23 @@ public:
 			delete[]data;
 	}
 	bignum &half();
-	friend ostream& operator<<(ostream& out, const bignum&other);
-	friend bool cmp_abs_smaller(const bignum&a, const bignum&b);
+	friend ostream& operator<<   (ostream& out, const bignum&other);
+	friend bool cmp_abs_smaller  (const bignum&a, const bignum&b);
 	friend bool   operator==     (const bignum&a, const bignum&b);//正数的相加
 	friend bool   operator!=     (const bignum&a, const bignum&b);
-	friend bool   operator<	   (const bignum&a, const bignum&b);
+	friend bool   operator<	     (const bignum&a, const bignum&b);
 	friend bool   operator<=     (const bignum&a, const bignum&b);
-	friend bool   operator>	   (const bignum&a, const bignum&b);
+	friend bool   operator>	     (const bignum&a, const bignum&b);
 	friend bool   operator>=     (const bignum&a, const bignum&b);
-	friend bignum operator+    (const bignum&a, const bignum&b);
-	friend bignum operator-    (const bignum&a, const bignum&b);
-	friend bignum operator*    (const bignum&a, const bignum&b);
-	friend bignum operator/(bignum a, const bignum&b);
-	friend bignum gcd(bignum a, bignum b);
-	friend bignum abs(const bignum&a);
-	friend bool abs_cmp(const natnum& a, const natnum& b);
+	bignum&       operator+=     (const bignum& other);
+	bignum&       operator-=     (const bignum& other);
+	friend bignum operator+      (const bignum&a, const bignum&b);
+	friend bignum operator-      (const bignum&a, const bignum&b);
+	friend bignum operator*      (const bignum&a, const bignum&b);
+	friend bignum operator/      (bignum a, const bignum&b);
+	friend bignum gcd            (bignum a, bignum b);
+	friend bignum abs            (const bignum&a);
+	friend bool abs_cmp          (const natnum& a, const natnum& b);
 };
 bignum Plus     (const bignum& a, const bignum& b);//正数的相加
 bignum Subtract (const bignum& a, const bignum& b);
@@ -114,10 +120,10 @@ public:
 		create(up*other.down, down*other.up);
 		return *this;
 	}
-	friend natnum operator+(const natnum& a, const natnum& other) { return natnum(a) += other; }
-	friend natnum operator-(const natnum& a, const natnum& other) { return natnum(a) -= other; }
-	friend natnum operator*(const natnum& a, const natnum& other) { return natnum(a) *= other; }
-	friend natnum operator/(const natnum& a, const natnum& other) { return natnum(a) /= other; }
+	friend natnum operator+(const natnum& a, const natnum& b) { return natnum(a.up*b.down + a.down*b.up, a.down*b.down); }
+	friend natnum operator-(const natnum& a, const natnum& b) { return natnum(a.up*b.down - a.down*b.up, a.down*b.down); }
+	friend natnum operator*(const natnum& a, const natnum& b) { return natnum(a.up*b.up, a.down*b.down); }
+	friend natnum operator/(const natnum& a, const natnum& b) { return natnum(a.up*b.down, a.down*b.up); }
 	bool operator==(const natnum& other)const
 	{
 		return up == other.up&&down == other.down;
