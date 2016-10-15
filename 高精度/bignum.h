@@ -27,33 +27,33 @@ public:
 	bignum &half();
 	friend ostream& operator<<(ostream& out, const bignum&other);
 	friend bool cmp_abs_smaller(const bignum&a, const bignum&b);
-	friend bool operator==(const bignum&a, const bignum&b);//正数的相加
-	friend bool operator!=(const bignum&a, const bignum&b);
-	friend bool operator<	(const bignum&a, const bignum&b);
-	friend bool operator<=(const bignum&a, const bignum&b);
-	friend bool operator>	(const bignum&a, const bignum&b);
-	friend bool operator>=(const bignum&a, const bignum&b);
-	friend bignum operator+(const bignum&a, const bignum&b);
-	friend bignum operator-(const bignum&a, const bignum&b);
-	friend bignum operator*(const bignum&a, const bignum&b);
-	friend bignum operator/(bignum a, bignum b);
+	friend bool   operator==     (const bignum&a, const bignum&b);//正数的相加
+	friend bool   operator!=     (const bignum&a, const bignum&b);
+	friend bool   operator<	   (const bignum&a, const bignum&b);
+	friend bool   operator<=     (const bignum&a, const bignum&b);
+	friend bool   operator>	   (const bignum&a, const bignum&b);
+	friend bool   operator>=     (const bignum&a, const bignum&b);
+	friend bignum operator+    (const bignum&a, const bignum&b);
+	friend bignum operator-    (const bignum&a, const bignum&b);
+	friend bignum operator*    (const bignum&a, const bignum&b);
+	friend bignum operator/(bignum a, const bignum&b);
 	friend bignum gcd(bignum a, bignum b);
 	friend bignum abs(const bignum&a);
 	friend bool abs_cmp(const natnum& a, const natnum& b);
 };
-bignum Plus(const bignum& a, const bignum& b);//正数的相加
-bignum Subtract(const bignum& a, const bignum& b);
+bignum Plus     (const bignum& a, const bignum& b);//正数的相加
+bignum Subtract (const bignum& a, const bignum& b);
 bignum operator+(const bignum&a, const bignum&b);
 bignum operator-(const bignum&a, const bignum&b);
 bignum operator*(const bignum&a, const bignum&b);
-bignum operator/(bignum a, bignum b);
+bignum operator/(bignum a, const bignum&b);
 
-bool operator==(const bignum & a, const bignum & b);
-bool operator!=(const bignum & a, const bignum & b);
-bool operator<(const bignum & a, const bignum & b);
-bool operator<=(const bignum & a, const bignum & b);
-bool operator>(const bignum & a, const bignum & b);
-bool operator>=(const bignum & a, const bignum & b);
+bool operator== (const bignum & a, const bignum & b);
+bool operator!= (const bignum & a, const bignum & b);
+bool operator<  (const bignum & a, const bignum & b);
+bool operator<= (const bignum & a, const bignum & b);
+bool operator>  (const bignum & a, const bignum & b);
+bool operator>= (const bignum & a, const bignum & b);
 
 bool cmp_abs_smaller(const bignum&a, const bignum&b);
 bignum gcd(bignum a, bignum b);

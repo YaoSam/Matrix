@@ -11,18 +11,23 @@ bignum Plus(const bignum& a, const bignum& b)
 	memset(ans.data, 0, sizeof(int)*ans.length);
 	memcpy(ans.data, a.data, sizeof(int)*a.length);
 	re(i, b.length)
-		ans.data[i] += b.data[i];
-	re(i, ans.length - 1)
 	{
-		if (ans.data[i]>10000)
+		ans.data[i] += b.data[i];
+
+	}
+	re(i,ans.length)
+		if (ans.data[i] >= 10000)
 		{
-			++ans.data[i + 1];
+			ans.data[i + 1]++;
 			ans.data[i] %= 10000;
 		}
-	}
 	if (ans.data[ans.length - 1] == 0)
 		ans.length--;
-	if (ans.length == 0)ans.sign = false;
+	if (ans.length == 0) {
+		ans.sign = false;
+		delete[]ans.data;
+		ans.data = nullptr;
+	}
 	return ans;
 }
 		
@@ -31,7 +36,6 @@ bignum Subtract(const bignum& a, const bignum& b)
 	bignum ans;
 	ans.sign = a.sign;
 	ans.length = a.length > b.length ? a.length : b.length;
-	int origin_len = ans.length;
 	ans.data = new int[ans.length];
 	memset(ans.data, 0, sizeof(int)*ans.length);
 	//相减（data
@@ -70,22 +74,17 @@ bignum Subtract(const bignum& a, const bignum& b)
 	{
 		if (ans.data[ans.length - i - 1] > 0)
 		{
-			ans.length -= i;
-			if(origin_len>ans.length)//大小改变了，调整节省空间。
-			{
-				int *temp_data = new int[ans.length];
-				memcpy(temp_data, ans.data, sizeof(int)*ans.length);
-				delete[]ans.data;
-				ans.data = temp_data;
-			}
-			return ans;
-		}
+
+			ans.length -= i;//这里内存会浪费些。
+			break;
+		}			
 		if (i == ans.length - 1)//全部皆为0
 		{
 			delete[]ans.data;
 			ans.data = nullptr;
 			ans.sign = false;
 			ans.length = 0;
+			return ans;
 		}
 	}
 	return ans;
@@ -107,9 +106,11 @@ bignum operator-(const bignum&a, const bignum&b);
 
 bignum operator*(const bignum& a, const bignum& b)
 {
-	static const bignum one("1"),zero("0");
+	static const bignum one("1");
 	if (a.length == 0 || b.length == 0)
 		return bignum();
+	if (b == one)return a;
+	if (a == one)return b;
 	bignum ans;
 	ans.length = a.length + b.length;
 	ans.data = new int[ans.length];
@@ -119,7 +120,7 @@ bignum operator*(const bignum& a, const bignum& b)
 		re(j,b.length)
 	{
 		ans.data[i + j] += a.data[i] * b.data[j];
-		if (ans.data[i + j] > 10000)
+		if (ans.data[i + j] >= 10000)
 		{
 			ans.data[i + j + 1] += ans.data[i + j] / 10000;
 			ans.data[i + j] %= 10000;
@@ -141,36 +142,29 @@ bignum operator*(const bignum& a, const bignum& b)
 	return ans;
 }
 
-bignum operator/(bignum a, bignum b)//TODO 除法的符号。
+bignum operator/(bignum a, const bignum&b)//TODO 除法的符号。
 {
-	static const bignum zero, one("1"), neg("-1"),two("2");
+	static const bignum zero("0"), one("1"), neg("-1"),two("2");
 	if (b == zero)throw "can't / zero!";
 	if (b == one)return a;
 	if (b == neg)return a.negative();
 	if (cmp_abs_smaller(a, b))return zero;
 	bool sign = (a.sign != b.sign);
-	b.sign = a.sign = false;
 	bignum ans,temp("1"),temp_b;
 	static vector<bignum> two_arr(1,temp);
-	int len=two_arr.size();
-	if (two_arr[len - 1] < a)
-	{
-		while (two_arr[two_arr.size() - 1] < a)
+	static const float coef = log2(10);
+	int len = int(coef*(4*a.length + 1))+1;
+	while (two_arr.size() < len)
 			two_arr.push_back(two_arr[two_arr.size() - 1] * two);
-		len = two_arr.size();
-	}
-	else
-	{
+	while (!cmp_abs_smaller(two_arr[len - 1],a))
 		len--;
-		while (two_arr[len - 1] >= a)
-			len--;
-	}
 	temp_b = two_arr[len - 1] * b;
-	re(i,len)
+	a.sign=temp_b.sign = false;
+	re(i, len)
 	{
 		if (temp_b == a)
 			return sign ? (ans + two_arr[len - i - 1]).negative() : (ans + two_arr[len - i - 1]);
-		if(temp_b<a)
+		if (temp_b<a)
 		{
 			a -= temp_b;
 			ans += two_arr[len - i - 1];
@@ -193,7 +187,7 @@ bool cmp_abs_smaller(const bignum & a, const bignum & b)
 }
 bool operator==(const bignum & a, const bignum & b)
 {
-	if (a.sign != b.sign)		return false;
+	if (a.sign   != b.sign)		return false;
 	if (a.length != b.length)	return false;
 	re(i, a.length)
 		if (a.data[i] != b.data[i])
@@ -234,13 +228,13 @@ bignum::bignum(const string& num) :
 	data(nullptr),
 	sign(false)
 {
-	if (num.length() == 0)
+	if (num.length() == 0||num=="0")
 		return;
 	if(num[0]=='-')
 	{
-		sign = true;
+		sign   = true;
 		length = (num.length() - 1) / 4 + ((num.length() - 1) % 4 != 0);
-		data = new int[length];
+		data   = new int[length];
 		memset(data, 0, sizeof(int)*length);
 		re(i,num.length()-1)
 		{
@@ -306,17 +300,28 @@ bignum::bignum(const bignum & other):
 bignum & bignum::operator=(const bignum & other)
 {
 	if (this == &other)	return*this;
-	if (data != nullptr)//TODO 优化内存的申请。
-		delete[]data;
-	length = other.length;
-	sign = other.sign;
-	if (length > 0)
+	if(length<other.length)
 	{
-		data = new int[length];
-		memcpy(data, other.data, sizeof(int)*length);
+		if (length != 0)
+			delete[]data;
+		data = new int[other.length];
+		memcpy(data, other.data, sizeof(int)*other.length);
 	}
 	else
-		data = nullptr;
+	{
+		if (other.length == 0)
+		{
+			data = nullptr;
+			delete[] data;
+		}
+		else
+		{
+			memset(data, 0, sizeof(int)*length);//这里内存会浪费一些。
+			memcpy(data, other.data, sizeof(int)*other.length);
+		}
+	}
+	length = other.length;
+	sign = other.sign;
 	return *this;
 }
 
