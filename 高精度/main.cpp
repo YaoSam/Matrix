@@ -25,7 +25,8 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
-#include"bignum.h"
+#include"big_int.h"
+#include "natnum.h"
 #include <vector>
 #include "../basic/bas_matrix.h"
 using namespace std;
@@ -33,36 +34,25 @@ using namespace std;
 #define re(i,n) for(unsigned int i=0;i<n;i++)
 #define DEBUG
 
-int kgcd(int a,int b)
-{
-	if (a == 0)return b;
-	if (b == 0)return a;
-	if ((a % 2 == 0) && b % 2 == 0)
-		return kgcd(a / 2, b / 2) * 2;
-	if (b % 2 == 0)
-		return kgcd(a, b / 2);
-	if (a % 2 == 0)
-		return kgcd(a / 2, b);
-	return kgcd(abs(a - b), a > b ? b : a);
-}
+
 void test()
 {
-	const unsigned n = 50;
-	Matrix<natnum> A(n, n);
+	const unsigned n = 40;
+	Matrix<q> A(n, n);
 	//cout << A << endl;
-	Matrix<natnum> B(n, 1);
-	B[0][0] = bignum(7);
+	Matrix<q> B(n, 1);
+	B[0][0] = big_int(7);
 	re(i, n)
 	{
-		A[i][i] = bignum(6);
+		A[i][i] = big_int(6);
 		if (i > 0)
 		{
-			A[i - 1][i] = bignum(1);
-			A[i][i - 1] = bignum(8);
-			B[0][i] = bignum(15);
+			A[i - 1][i] = big_int(1);
+			A[i][i - 1] = big_int(8);
+			B[0][i] = big_int(15);
 		}
 	}
-	B[0][n - 1] = bignum(14);
+	B[0][n - 1] = big_int(14);
 	//cout << A << endl;
 	//cout << A.inverse()*B << endl;
 	//cout<<A.ChosenLU()<<endl;
@@ -89,7 +79,7 @@ int main()
 		/*Ö÷º¯Êý*/
 		test();
 		//string a,b;
-		//vector<bignum> num;
+		//vector<big_int> num;
 		//while (cin >> a >> b)
 		//	cout << a << " " << b << " " << natnum(a, b) << endl;
 	}

@@ -111,7 +111,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\basic\bas_matrix.cpp" />
-    <ClCompile Include="bignum.cpp" />
+    <ClCompile Include="big_int.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -119,7 +119,8 @@
     <Text Include="out.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bignum.h" />
+    <ClInclude Include="big_int.h" />
+    <ClInclude Include="natnum.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

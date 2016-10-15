@@ -1,38 +1,21 @@
-#include "bignum.h"
+#include "big_int.h"
 #include <iostream>
 #include <vector>
 const int ten[6] = { 1,10,100,1000,10000,100000 };
-void bignum::expend()
-{
-	if(size==0&&size<length)
-	{
-		size = length;
-		data = new int[size];
-		memset(data, 0, sizeof(int)*size);
-		return;
-	}
-	while(size<length)
-		size *= 2;
-	int* temp_data = new int[size];
-	memset(temp_data, 0, sizeof(int)*size);
-	memcpy(temp_data, data, sizeof(int)*length);
-	delete[]data;
-	data = temp_data;
-}
-
-bignum::bignum(const string& num) :
+big_int::big_int(const string& num) :
 	length(0),
 	data(nullptr),
 	sign(false),
 	size(0)
 {
-	if (num.length() == 0 || num == "0")
+	if (num.length() == 0 || num == "0" || num == "-0")
 		return;
 	if (num[0] == '-')
 	{
 		sign = true;
 		length = (num.length() - 1) / 4 + ((num.length() - 1) % 4 != 0);
-		expend();
+		size = length * 2;
+		apply_memory(data,size);
 		re(i, num.length() - 1)
 		{
 			if ((num[m - i] - '0') != 0)
@@ -43,7 +26,8 @@ bignum::bignum(const string& num) :
 	else
 	{
 		length = num.length() / 4 + (num.length() % 4 != 0);
-		expend();
+		size = length * 2;
+		apply_memory(data,size);
 		re(i, num.length())
 		{
 			if ((num[m - i - 1] - '0') != 0)
@@ -53,7 +37,7 @@ bignum::bignum(const string& num) :
 
 }
 
-bignum::bignum(int num) :
+big_int::big_int(int num) :
 	data(nullptr), sign(num < 0), length(0), size(0)
 {
 	if (num == 0)return;
@@ -81,7 +65,7 @@ bignum::bignum(int num) :
 	}
 }
 
-bignum::bignum(const bignum & other) :
+big_int::big_int(const big_int & other) :
 	data(nullptr),
 	length(other.length),
 	sign(other.sign),
@@ -89,13 +73,12 @@ bignum::bignum(const bignum & other) :
 {
 	if(length>0)
 	{
-		data = new int[size];
-		memset(data, 0, sizeof(int)*size);
+		apply_memory(data, size);
 		memcpy(data, other.data, sizeof(int)*length);
 	}
 }
 
-bignum & bignum::operator=(const bignum & other)
+big_int & big_int::operator=(const big_int & other)
 {
 	if (this == &other)	return*this;
 	if (size < other.length)
@@ -103,8 +86,7 @@ bignum & bignum::operator=(const bignum & other)
 		if (size != 0)
 			delete[]data;
 		size = 2 * other.length;
-		data = new int[size];//new伴随着size。
-		memset(data, 0, sizeof(int)*size);
+		apply_memory(data, size);
 		memcpy(data, other.data, sizeof(int)*other.length);
 	}
 	else
@@ -126,14 +108,13 @@ bignum & bignum::operator=(const bignum & other)
 	return *this;
 }
 
-bignum Plus(const bignum& a, const bignum& b)
+big_int Plus(const big_int& a, const big_int& b)
 {
-	bignum ans;
+	big_int ans;
 	ans.length = (a.length > b.length ? a.length : b.length) + 1;
-	ans.data   = new int[ans.length];
 	ans.size   = ans.length;
+	ans.apply_memory(ans.data, ans.size);
 	ans.sign   = a.sign;
-	memset(ans.data, 0, sizeof(int)*ans.length);
 	memcpy(ans.data, a.data, sizeof(int)*a.length);
 	re(i, b.length)
 		ans.data[i] += b.data[i];
@@ -154,9 +135,9 @@ bignum Plus(const bignum& a, const bignum& b)
 	return ans;
 }
 	
-bignum& bignum::Plus(const bignum& other)
+big_int& big_int::Plus(const big_int& other)
 {
-	static const bignum zero;
+	static const big_int zero;
 	if (other.length == 0) return *this;
 	int origin_len = length;
 	length = length > other.length ? length : other.length + 1;
@@ -189,14 +170,13 @@ bignum& bignum::Plus(const bignum& other)
 	return *this;
 }
 
-bignum Subtract(const bignum& a, const bignum& b)
+big_int Subtract(const big_int& a, const big_int& b)
 {
-	bignum ans;
+	big_int ans;
 	ans.sign   = a.sign;
 	ans.length = a.length > b.length ? a.length : b.length;
-	ans.data   = new int[ans.length];
 	ans.size   = ans.length;
-	memset(ans.data, 0, sizeof(int)*ans.length);
+	ans.apply_memory(ans.data, ans.size);
 	//相减（data
 	memcpy(ans.data, a.data, sizeof(int)*a.length);
 	re(i, b.length)
@@ -250,9 +230,9 @@ bignum Subtract(const bignum& a, const bignum& b)
 	return ans;
 }
 
-bignum& bignum::Subtract(const bignum& other)
+big_int& big_int::Subtract(const big_int& other)
 {
-	static const bignum zero;
+	static const big_int zero;
 	if (other == zero)return *this;
 	if (size < other.length)
 	{
@@ -313,33 +293,32 @@ bignum& bignum::Subtract(const bignum& other)
 	return *this;
 }
 
-
-bignum operator+(const bignum&a, const bignum&b) {
+big_int operator+(const big_int&a, const big_int&b) {
 	return a.sign == b.sign ? Plus(a, b) : Subtract(a, b);
 }
 
-bignum& bignum::operator+=(const bignum& other)
+big_int& big_int::operator+=(const big_int& other)
 {
 	return sign == other.sign ? Plus(other) : Subtract(other);
 }
 
-bignum operator-(const bignum&a, const bignum&b) {
+big_int operator-(const big_int&a, const big_int&b) {
 	return a.sign != b.sign ? Plus(a, b) : Subtract(a, b);
 }
 
-bignum& bignum::operator-=(const bignum& other)
+big_int& big_int::operator-=(const big_int& other)
 {
 	return sign != other.sign ? Plus(other) : Subtract(other);
 }
 
-bignum operator*(const bignum& a, const bignum& b)
+big_int operator*(const big_int& a, const big_int& b)
 {
-	static const bignum one("1");
+	static const big_int one("1");
 	if (a.length == 0 || b.length == 0)
-		return bignum();
+		return big_int();
 	if (b == one)return a;
 	if (a == one)return b;
-	bignum ans;
+	big_int ans;
 	ans.length = a.length + b.length;
 	ans.data = new int[ans.length];
 	ans.size = ans.length;
@@ -372,16 +351,16 @@ bignum operator*(const bignum& a, const bignum& b)
 	return ans;
 }
 
-bignum operator/(bignum a, const bignum&b)//TODO 除法的符号。
+big_int operator/(big_int a, const big_int&b)//TODO 除法的符号。
 {
-	static const bignum zero("0"), one("1"), neg("-1"),two("2");
+	static const big_int zero("0"), one("1"), neg("-1"),two("2");
 	if (b == zero)throw "can't / zero!";
 	if (b == one)return a;
 	if (b == neg)return a.negative();
 	if (cmp_abs_smaller(a, b))return zero;
 	bool sign = (a.sign != b.sign);
-	bignum ans,temp("1"),temp_b;
-	static vector<bignum> two_arr(1,temp);
+	big_int ans,temp("1"),temp_b;
+	static vector<big_int> two_arr(1,temp);
 	static const float coef = log2(10);
 	int len = int(coef*(4*a.length + 1));
 	while (two_arr.size() < len)
@@ -404,7 +383,7 @@ bignum operator/(bignum a, const bignum&b)//TODO 除法的符号。
 	return sign ? ans.negative() : ans;
 }
 
-bool cmp_abs_smaller(const bignum & a, const bignum & b)
+bool cmp_abs_smaller(const big_int & a, const big_int & b)
 {
 	if (a.length < b.length)return true;
 	if (a.length > b.length)return false;
@@ -415,7 +394,7 @@ bool cmp_abs_smaller(const bignum & a, const bignum & b)
 	}
 	return false;
 }
-bool operator==(const bignum & a, const bignum & b)
+bool operator==(const big_int & a, const big_int & b)
 {
 	if (a.sign   != b.sign)		return false;
 	if (a.length != b.length)	return false;
@@ -425,16 +404,12 @@ bool operator==(const bignum & a, const bignum & b)
 	return true;
 	//return equal(a.data, a.data + a.length, b.data);
 }
-bool operator!=(const bignum & a, const bignum & b)
-{
-	return !(a == b);
-}
-bool operator<(const bignum & a, const bignum & b)
+bool operator<(const big_int & a, const big_int & b)
 {
 	if (a.sign != b.sign)return a.sign == true;
 	return a.sign != cmp_abs_smaller(a, b);//+,false <  ||||| -,true >=
 }
-bool operator<=(const bignum & a, const bignum & b)
+bool operator<=(const big_int & a, const big_int & b)
 {
 	if (a.sign != b.sign)return a.sign == true;
 	if (a.length != b.length)return (a.length < b.length) != a.sign;
@@ -445,16 +420,8 @@ bool operator<=(const bignum & a, const bignum & b)
 	}
 	return true;
 }
-bool operator>(const bignum & a, const bignum & b)
-{
-	return !(a <= b);
-}
-bool operator>=(const bignum & a, const bignum & b)
-{
-	return !(a < b);
-}
 
-bignum& bignum::half() 
+big_int& big_int::half() 
 {
 	if (length == 0)return *this;
 	re(i, length - 1)
@@ -464,7 +431,6 @@ bignum& bignum::half()
 		data[m - i] /= 2;
 	}
 	data[0] /= 2;
-
 	if (data[length - 1] == 0)
 		length--;
 	if (length == 0)
@@ -477,7 +443,7 @@ bignum& bignum::half()
 	return *this;
 }
 
-ostream & operator<<(ostream & out, const bignum & other)
+ostream & operator<<(ostream & out, const big_int & other)
 {
 	if (other.sign)out << '-';
 	if (other.length > 0)
@@ -497,11 +463,24 @@ ostream & operator<<(ostream & out, const bignum & other)
 	return out;
 }
 
-
-bignum gcd(bignum a, bignum b)
+big_int gcd(big_int a, big_int b)
 {
-	static bignum two("2");
-	bignum ans("1");
+	//整数情况下的算法。
+	//int kgcd(int a, int b)
+	//{
+	//	if (a == 0)return b;
+	//	if (b == 0)return a;
+	//	if ((a % 2 == 0) && b % 2 == 0)
+	//		return kgcd(a / 2, b / 2) * 2;
+	//	if (b % 2 == 0)
+	//		return kgcd(a, b / 2);
+	//	if (a % 2 == 0)
+	//		return kgcd(a / 2, b);
+	//	return kgcd(abs(a - b), a > b ? b : a);
+	//}
+	
+	static big_int two("2");
+	big_int ans("1");
 	ans.sign = a.sign&&b.sign;
 	a.sign = b.sign = false;
 	while(true)

@@ -18,10 +18,10 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="bignum.cpp">
+    <ClCompile Include="..\basic\bas_matrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\basic\bas_matrix.cpp">
+    <ClCompile Include="big_int.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -34,7 +34,10 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bignum.h">
+    <ClInclude Include="big_int.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="natnum.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
