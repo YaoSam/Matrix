@@ -405,23 +405,47 @@ Template(deri_matrix) inverse() const
 		throw "行列不同，无法求逆。";
 	deri_matrix ans(row, row), me(static_cast<const deri_matrix&>(*this));
 	deri_matrix b(me.ChosenLU());
-	T temp = 0;//先累加，减少误差。
-	re(j,row)
+	unsigned & n = thread_num;
+	vector<thread> Thread;
+	re(thread_i,thread_num)
+	Thread.push_back(thread([this,thread_i,n,&ans,&me,&b]()
 	{
-		re(i, row)
+		T temp = 0;//先累加，减少误差。
+		for (int j = thread_i; j < row; j += n)
 		{
-			for (unsigned k = 0; k + 1 <= i; k++)
-				temp += me.row_p[i][k] * ans.row_p[k][j];
-			ans.row_p[i][j] = b.row_p[i][j] - temp;
-			temp = T(0);//temp不能忘了重置。
+			re(i, row)
+			{
+				for (unsigned k = 0; k + 1 <= i; k++)
+					temp += me.row_p[i][k] * ans.row_p[k][j];
+				ans.row_p[i][j] = b.row_p[i][j] - temp;
+				temp = T(0);//temp不能忘了重置。
+			}
+			for (int i = row - 1; i >= 0; i--, temp = T(0))
+			{
+				for (unsigned k = i + 1; k < row; k++)
+					temp += me.row_p[i][k] * ans.row_p[k][j];
+				(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
+			}
 		}
-		for (int i = row - 1; i >= 0; i--, temp = T(0))
-		{
-			for (unsigned k = i + 1; k < row; k++)
-				temp += me.row_p[i][k] * ans.row_p[k][j];
-			(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
-		}
-	}
+	}));
+	for (auto& i : Thread)
+		i.join();
+	//re(j,row)
+	//{
+	//	re(i, row)
+	//	{
+	//		for (unsigned k = 0; k + 1 <= i; k++)
+	//			temp += me.row_p[i][k] * ans.row_p[k][j];
+	//		ans.row_p[i][j] = b.row_p[i][j] - temp;
+	//		temp = T(0);//temp不能忘了重置。
+	//	}
+	//	for (int i = row - 1; i >= 0; i--, temp = T(0))
+	//	{
+	//		for (unsigned k = i + 1; k < row; k++)
+	//			temp += me.row_p[i][k] * ans.row_p[k][j];
+	//		(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
+	//	}
+	//}
 	return ans;
 }
 
