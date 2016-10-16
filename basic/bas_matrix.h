@@ -3,6 +3,7 @@
 #include <vector>
 #include<thread>
 #include <windows.h>
+#include <iomanip>
 using namespace std;
 #undef re
 #define re(i,n) for(unsigned int i=0;i<n;i++)
@@ -50,7 +51,7 @@ public:
 	bas_matrix(unsigned r, unsigned c);
 	bas_matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0);
 	bas_matrix(const bas_matrix& other);
-	deri_matrix& operator=(const bas_matrix & other);
+	deri_matrix& operator=(const deri_matrix & other);
 	T *const operator[](unsigned r) { return row_p[r]; }
 	const T*const operator[](unsigned r)const { return row_p[r]; }
 	friend ostream& operator<<(ostream& out, const deri_matrix& me)
@@ -83,6 +84,7 @@ public:
 	deri_matrix& operator+=(const deri_matrix& other);
 	deri_matrix& operator*=(const deri_matrix& other);
 	deri_matrix operator+(const deri_matrix& other)const;
+	deri_matrix operator-(const deri_matrix& other)const;
 	deri_matrix operator*(const deri_matrix& other)const;
 	bool operator==(const deri_matrix& other)const;
 	deri_matrix& LU();
@@ -90,6 +92,7 @@ public:
 	deri_matrix solve(const deri_matrix& input)const;
 	deri_matrix LU_solve(const deri_matrix& input)const;//当矩阵已经进行LU分解时直接用来求解。
 	deri_matrix inverse()const;//基于ChosenLU()的求逆。
+	void QR(deri_matrix& Q,deri_matrix& R)const;
 	virtual ~bas_matrix();
 };
 
@@ -136,8 +139,6 @@ Template(void)release()
 		delete[]row_p;
 		delete[]data;
 	}
-	data = nullptr;
-	row_p = nullptr;
 }
 
 Template(void) apply_unsafe(unsigned m, unsigned n)
@@ -199,7 +200,7 @@ Template() bas_matrix(const bas_matrix & other) :
 		row_p[i] = data + (other.row_p[i] - other.data);
 }
 
-Template(deri_matrix &) operator=(const bas_matrix & other)
+Template(deri_matrix &) operator=(const deri_matrix & other)
 {
 	if (this == &other)
 		return static_cast<deri_matrix&>(*this);
@@ -267,6 +268,16 @@ Template(deri_matrix) operator+(const deri_matrix & other) const
 	re(i, row)
 		re(j, col)
 		ans.row_p[i][j] = row_p[i][j] + other.row_p[i][j];
+	return ans;
+}
+Template(deri_matrix) operator-(const deri_matrix & other) const
+{
+	if (other.col != col || other.row != row)
+		throw"sizes are not equal";
+	deri_matrix ans(row, col);
+	re(i, row)
+		re(j, col)
+		ans.row_p[i][j] = row_p[i][j] - other.row_p[i][j];
 	return ans;
 }
 
@@ -449,6 +460,34 @@ Template(deri_matrix) inverse() const
 	return ans;
 }
 
+Template(void) QR(deri_matrix& Q, deri_matrix& R)const
+{
+	if (&Q == &R)throw"Q，R不能用同一个矩阵啊……";
+	Q = static_cast<const deri_matrix&>(*this);
+	R = deri_matrix(col, col);
+	re(i,col)
+	{
+		re(k, row)
+			Q.row_p[k][i] = row_p[k][i];
+		for (int j = 0; j  < i; j++)
+		{
+			re(k, row)
+				R.row_p[j][i] += Q.row_p[k][j] * row_p[k][i];
+			re(k,row)
+				Q.row_p[k][i] -= R.row_p[j][i] * Q.row_p[k][j];
+		}
+		T temp=T();
+		re(k, row)
+			R.row_p[i][i] += Q.row_p[k][i] * Q.row_p[k][i];
+		R.row_p[i][i] = sqrt(R.row_p[i][i]);//必须定义求根号。
+		if (R.row_p[i][i]==T())
+			throw"three must be something wrong";
+		re(k, row)
+			Q.row_p[k][i] /= R.row_p[i][i];
+	}
+}
+
+
 Template()~bas_matrix()
 {
 	release();
@@ -463,5 +502,10 @@ public:
 	Matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(const Matrix& other) :bas_matrix(other) {}
+	Matrix& operator=(const Matrix& other)
+	{
+		static_cast<bas_matrix<Matrix<value_type>, value_type>&>(*this).operator=(other); 
+		return *this;
+	}
 	~Matrix() {};
 };
