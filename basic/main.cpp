@@ -64,9 +64,18 @@ int main()
 //#endif
 	try {
 		/*Ö÷º¯Êý*/
-		test();
+		//test();
 		//const unsigned n = 3;
-		//Matrix<double> A(n, n);
+		Matrix<double> A;
+		cin >> A;
+		cout << A << endl;
+		Matrix<double> q, r;
+		A.QR(q, r);
+		cout << q << endl << r << endl;
+		cout << A - q*r << endl;
+		cout << q.transform()*q << endl;
+		cout << r.inverse()*q.transform() << endl;
+		cout << (A.transform()*A).inverse()*A.transform() << endl;
 		//Matrix<double> B(n, 1);
 		//B[0][0] = 7;
 		//re(i,n)

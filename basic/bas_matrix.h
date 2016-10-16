@@ -87,6 +87,7 @@ public:
 	deri_matrix operator-(const deri_matrix& other)const;
 	deri_matrix operator*(const deri_matrix& other)const;
 	bool operator==(const deri_matrix& other)const;
+	deri_matrix transform()const;
 	deri_matrix& LU();
 	deri_matrix ChosenLU();
 	deri_matrix solve(const deri_matrix& input)const;
@@ -509,3 +510,12 @@ public:
 	}
 	~Matrix() {};
 };
+
+Template(deri_matrix) transform() const
+{
+	deri_matrix ans(col, row);
+	re(i, row)
+		re(j, col)
+		ans.row_p[j][i] = row_p[i][j];
+	return ans;
+}

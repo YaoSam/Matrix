@@ -11,11 +11,11 @@ class big_int
 	bool sign;
 	int length;
 	int size;
-	big_int& negative() { sign = true; return *this; }
-	friend big_int Plus(const big_int& a, const big_int& b);
-	big_int& Plus(const big_int& other);
-	big_int& Subtract(const big_int& other);
-	friend big_int Subtract(const big_int& a, const big_int& b);
+	       big_int& negative() { sign = true; return *this; }
+	friend big_int	Plus    (const big_int& a, const big_int& b);
+	       big_int& Plus    (const big_int& other);
+	       big_int& Subtract(const big_int& other);
+	friend big_int Subtract (const big_int& a, const big_int& b);
 	static void apply_memory(int* &pointer,int Size)
 	{
 		pointer = new int[Size];

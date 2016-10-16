@@ -40,5 +40,8 @@
     <ClInclude Include="natnum.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\basic\bas_matrix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
