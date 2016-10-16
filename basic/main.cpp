@@ -47,6 +47,15 @@ void test()
 	cout << "运行时间::" << clock() - BeginTime << endl;
 	cout << "矩阵大小::" << m << " " << n << endl;
 }
+
+double x_n(double x,int n)
+{
+	double ans = 1;
+	re(i, n)
+		ans *= x;
+	return ans;
+}
+
 extern unsigned thread_num;
 int main()
 {
@@ -76,27 +85,15 @@ int main()
 		cout << q.transform()*q << endl;
 		cout << r.inverse()*q.transform() << endl;
 		cout << (A.transform()*A).inverse()*A.transform() << endl;
-		//Matrix<double> B(n, 1);
-		//B[0][0] = 7;
-		//re(i,n)
-		//{
-		//	A[i][i] = 6;
-		//	if (i > 0)
-		//	{
-		//		A[i - 1][i] = 1;
-		//		A[i][i - 1] = 8;
-		//		B[0][i] = 15;
-		//	}
-		//}
-		//B[0][n-1] = 14;
-		//cout << A << endl;
-		////A.LU();
-		//cout << A.inverse()*A << endl;
-		////matrix P(A.ChosenLU());
-		////cout << A.ChosenLU() << endl;
-		////cout << A << endl;
-		////cout <<setprecision(15)<< A.LU_solve(P*B) << endl;;
-		////cout << B << endl;
+		Matrix<double> b;
+		cin >> b;
+		re(i, 5)
+			re(j, 5)
+			A[i][j] = x_n(i+1, j);
+		cout << A << endl;
+		A.QR(q, r);
+		cout << (A.transform()*A).inverse()*A.transform()*b<<endl;
+		cout << r.inverse()*q.transform()*b<<endl;
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
