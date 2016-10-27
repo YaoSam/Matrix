@@ -69,4 +69,3 @@ bool operator>= (const big_int & a, const big_int & b);
 
 bool cmp_abs_smaller(const big_int&a, const big_int&b);
 big_int gcd(big_int a, big_int b);
-big_int abs(const big_int&a);

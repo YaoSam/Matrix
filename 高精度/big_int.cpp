@@ -353,12 +353,30 @@ big_int operator*(const big_int& a, const big_int& b)
 
 big_int operator/(big_int a, const big_int&b)//TODO ³ý·¨µÄ·ûºÅ¡£
 {
-	static const big_int zero("0"), one("1"), neg("-1"),two("2");
+	static const big_int zero("0"), one("1"), two("2");
 	if (b == zero)throw "can't / zero!";
 	if (b == one)return a;
-	if (b == neg)return a.negative();
 	if (cmp_abs_smaller(a, b))return zero;
 	bool sign = (a.sign != b.sign);
+	if(b.length==1)
+	{
+		big_int ans(a);
+		re(i,ans.length-1)
+		{
+			ans.data[m - i - 1] += (ans.data[m - i] % b.data[0]) * 10000;
+			ans.data[m - i] /= b.data[0];
+		}
+		ans.data[0] /= b.data[0];
+		if (ans.data[ans.length - 1] == 0)
+			ans.length--;
+		if(ans.length==0)
+		{
+			ans.size = 0;
+			delete[]ans.data;
+			ans.data = nullptr;
+		}
+		return sign ? ans.negative() : ans;
+	}
 	big_int ans,temp("1"),temp_b;
 	static vector<big_int> two_arr(1,temp);
 	static const float coef = log2(10);
