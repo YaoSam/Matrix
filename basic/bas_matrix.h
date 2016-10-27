@@ -30,17 +30,21 @@ protected:
 	T*data;
 	T**row_p;
 	unsigned row, col;
-	void static dot_product(T (&ans), T** a, T** b, unsigned r, unsigned c, unsigned num);
-	void ExchangeR(unsigned r1, unsigned r2)const//交换r1,r1行
+	void static dot_product(T (&ans), T* a, T** b, unsigned c, unsigned num);
+	void static dot_product(T(&ans), T** a, unsigned ac, T** b, unsigned bc, unsigned num);
+	void static dot_product(T(&ans), T* a, T* b, unsigned num);
+	void static two_norm   (T & ans, T *a,unsigned num);
+	void static two_norm   (T & ans, T **a,unsigned c, unsigned num);
+	void ExchangeR		   (unsigned r1, unsigned r2)const//交换r1,r1行
 	{
 		swap(row_p[r1], row_p[r2]);
 	}
-	void ExchangeC(unsigned c1, unsigned c2)const;//交换c1,c2列
-	void RowAplusRowB(unsigned a, unsigned b, T coefficient = 1, unsigned after = 0)const;//a行+=b行*coefficient
-	void RowAmutiply(unsigned a, T coefficient = 0)const;
+	void ExchangeC        (unsigned c1, unsigned c2)const;//交换c1,c2列
+	void RowAplusRowB     (unsigned a, unsigned b, T coefficient = 1, unsigned after = 0)const;//a行+=b行*coefficient
+	void RowAmutiply      (unsigned a, T coefficient = 0)const;
 	unsigned find_MaxInCol(unsigned c, unsigned under = 0)const;//从under开始找某列的最大值。
-	void release();
-	void apply_unsafe(unsigned m, unsigned n);//change the shape.
+	void release          ();
+	void apply_unsafe     (unsigned m, unsigned n);//change the shape.
 	void clear()const//make all zero.
 	{
 		re(i, row)
@@ -48,12 +52,12 @@ protected:
 	}
 	deri_matrix static one(unsigned n);
 public:
-	bas_matrix(unsigned r, unsigned c);
-	bas_matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0);
-	bas_matrix(const bas_matrix& other);
-	deri_matrix& operator=(const deri_matrix & other);
-	T *const operator[](unsigned r) { return row_p[r]; }
-	const T*const operator[](unsigned r)const { return row_p[r]; }
+	bas_matrix                (unsigned r, unsigned c);
+	bas_matrix                (T **Data = nullptr, unsigned r = 0, unsigned c = 0);
+	bas_matrix                (const bas_matrix& other);
+	deri_matrix& operator=    (const deri_matrix & other);
+	T *const operator[]       (unsigned r)      { return row_p[r]; }
+	const T*const operator[]  (unsigned r)const { return row_p[r]; }
 	friend ostream& operator<<(ostream& out, const deri_matrix& me)
 	{
 		re(i, me.row)
@@ -70,7 +74,7 @@ public:
 			me.release();
 		in >> me.row >> me.col;
 		if (me.row*me.col == 0)return in;
-		me.data = new T[me.row*me.col];
+		me.data  = new T[me.row*me.col];
 		me.row_p = new T*[me.row];
 		re(i, me.row)
 		{
@@ -83,19 +87,58 @@ public:
 
 	deri_matrix& operator+=(const deri_matrix& other);
 	deri_matrix& operator*=(const deri_matrix& other);
-	deri_matrix operator+(const deri_matrix& other)const;
-	deri_matrix operator-(const deri_matrix& other)const;
-	deri_matrix operator*(const deri_matrix& other)const;
-	bool operator==(const deri_matrix& other)const;
-	deri_matrix transform()const;
-	deri_matrix& LU();
-	deri_matrix ChosenLU();
-	deri_matrix solve(const deri_matrix& input)const;
-	deri_matrix LU_solve(const deri_matrix& input)const;//当矩阵已经进行LU分解时直接用来求解。
-	deri_matrix inverse()const;//基于ChosenLU()的求逆。
-	void QR(deri_matrix& Q,deri_matrix& R)const;
+	deri_matrix  operator+ (const deri_matrix& other)const;
+	deri_matrix  operator- (const deri_matrix& other)const;
+	deri_matrix  operator* (const deri_matrix& other)const;
+	bool         operator==(const deri_matrix& other)const;
+	deri_matrix transform  ()const;
+	deri_matrix& LU        ();
+	deri_matrix ChosenLU   ();
+	deri_matrix solve      (const deri_matrix& input)const;
+	deri_matrix LU_solve   (const deri_matrix& input)const;//当矩阵已经进行LU分解时直接用来求解。
+	deri_matrix inverse    ()const;//基于ChosenLU()的求逆。
+	void QR                (deri_matrix& Q,deri_matrix& R)const;
+	static void House      (const deri_matrix& mat, unsigned r, unsigned c,T* ans);
+	void qr                (deri_matrix& Q, deri_matrix& R)const;
 	virtual ~bas_matrix();
 };
+
+Template(void) dot_product(T(&ans), T* a, T** b, unsigned c, unsigned num)
+{
+	ans = T();
+	re(i, num)
+		ans += a[i] * b[i][c];
+}
+
+Template(void) dot_product(T(&ans), T** a, unsigned ac, T** b, unsigned bc, unsigned num)
+{
+	ans = T();
+	re(i, num)
+		ans += a[i][ac] * b[i][bc];
+}
+
+Template(void) dot_product(T(&ans), T* a, T* b, unsigned num)
+{
+	ans = T();
+	re(i, num)
+		ans += a[i] * b[i];
+}
+
+Template(void) two_norm(T & ans, T *a, unsigned num)
+{
+	ans = T();
+	re(i, num)
+		ans += a[i] * a[i];
+	ans=sqrt(ans);
+}
+
+Template(void) two_norm(T & ans, T **a, unsigned c, unsigned num)
+{
+	ans = T();
+	re(i, num)
+		ans += a[i][c] * a[i][c];
+	ans = sqrt(ans);
+}
 
 Template(void) ExchangeC(unsigned c1, unsigned c2) const
 {
@@ -128,7 +171,7 @@ Template(unsigned) find_MaxInCol(unsigned c, unsigned under) const//必须定义
 		//if (abs(row_p[i][c])>abs(current_max))
 		{
 			current_max = row_p[i][c];
-			ans = i;
+			ans         = i;
 		}
 	return ans;
 }
@@ -212,13 +255,13 @@ Template(deri_matrix &) operator=(const deri_matrix & other)
 		col = other.col;
 		if(row!=0&&col!=0)
 		{
-			data = new T[row*col];
+			data  = new T[row*col];
 			row_p = new T*[row];
 		}
 	}
 	//memcpy(data, other.data, sizeof(T)*row*col);
 	re(i, row*col)
-		data[i] = other.data[i];
+		data[i]  = other.data[i];
 	re(i, row)
 		row_p[i] = data + (other.row_p[i] - other.data);
 	return static_cast<deri_matrix&>(*this);
@@ -238,9 +281,10 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 {
 	if (other.row != col)
 		throw "size is not right!!!";
-	T* temp_data = new T[row*other.col];
-	T** temp_row_p = new T*[row];
-	re(i,row)temp_row_p[i]= temp_data + other.col*i;
+	T*  temp_data     = new T[row*other.col];
+	T** temp_row_p    = new T*[row];
+	re(i,row)
+		temp_row_p[i] = temp_data + other.col*i;
 	//多线程
 	vector<thread> Thread;
 	const unsigned &n = thread_num;
@@ -249,15 +293,15 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 	{
 		for (unsigned j = i; j < row; j += n)
 			re(k, other.col)
-			re(l, col)
-			temp_row_p[j][k] = row_p[j][l] * other.row_p[l][k];
+				re(l, col)
+					temp_row_p[j][k] = row_p[j][l] * other.row_p[l][k];
 	}));
 	for (auto& i : Thread)
 		i.join();
 	release();
-	data = temp_data;
+	data  = temp_data;
 	row_p = temp_row_p;
-	col = other.col;
+	col   = other.col;
 	return static_cast<deri_matrix&>(*this);
 }
 
@@ -365,7 +409,7 @@ Template(deri_matrix) ChosenLU()
 	return P;
 }
 
-Template(deri_matrix)LU_solve(const deri_matrix & input) const
+Template(deri_matrix) LU_solve(const deri_matrix & input) const
 {
 	if (input.row != row)
 		throw "error";
@@ -376,12 +420,13 @@ Template(deri_matrix)LU_solve(const deri_matrix & input) const
 		for (unsigned k = 0; k + 1 <= i; k++)
 			temp += row_p[i][k] * ans.data[k];
 		ans.data[i] = input.data[i] - temp;
-		temp = T();//temp不能忘了重置。
+		temp        = T();//temp不能忘了重置。
 	}
 	for (int i = row - 1; i >= 0; i--, temp = T())
 	{
-		for (unsigned k = i + 1; k < row; k++)
-			temp += row_p[i][k] * ans.data[k];
+		dot_product(temp, row_p[i] + i + 1, ans.data + i + 1, row - i - 1);
+		//for (unsigned k = i + 1; k < row; k++)
+			//temp += row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= row_p[i][i];
 	}
 	return ans;
@@ -400,12 +445,13 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 		for (unsigned k = 0; k + 1 <= i; k++)
 			temp += me.row_p[i][k] * ans.data[k];
 		ans.data[i] = b.data[i] - temp;
-		temp = 0;//temp不能忘了重置。
+		temp        = 0;//temp不能忘了重置。
 	}
 	for (int i = row - 1; i >= 0; i--, temp = 0)
 	{
-		for (unsigned k = i + 1; k < row; k++)
-			temp += me.row_p[i][k] * ans.data[k];
+		dot_product(temp, me.row_p[i] + i + 1, ans.data + i + 1, row - i - 1);
+		//for (unsigned k = i + 1; k < row; k++)
+			//temp += me.row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= me.row_p[i][i];
 	}
 	return ans;
@@ -442,22 +488,6 @@ Template(deri_matrix) inverse() const
 	}));
 	for (auto& i : Thread)
 		i.join();
-	//re(j,row)
-	//{
-	//	re(i, row)
-	//	{
-	//		for (unsigned k = 0; k + 1 <= i; k++)
-	//			temp += me.row_p[i][k] * ans.row_p[k][j];
-	//		ans.row_p[i][j] = b.row_p[i][j] - temp;
-	//		temp = T(0);//temp不能忘了重置。
-	//	}
-	//	for (int i = row - 1; i >= 0; i--, temp = T(0))
-	//	{
-	//		for (unsigned k = i + 1; k < row; k++)
-	//			temp += me.row_p[i][k] * ans.row_p[k][j];
-	//		(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
-	//	}
-	//}
 	return ans;
 }
 
@@ -466,26 +496,75 @@ Template(void) QR(deri_matrix& Q, deri_matrix& R)const
 	if (&Q == &R)throw"Q，R不能用同一个矩阵啊……";
 	Q = static_cast<const deri_matrix&>(*this);
 	R = deri_matrix(col, col);
+	T temp = T();
 	re(i,col)
 	{
 		re(k, row)
 			Q.row_p[k][i] = row_p[k][i];
 		for (int j = 0; j  < i; j++)
 		{
-			re(k, row)
-				R.row_p[j][i] += Q.row_p[k][j] * row_p[k][i];
+			dot_product(R.row_p[j][i], Q.row_p, j, row_p, i, row);
+			//re(k, row)
+				//R.row_p[j][i] += Q.row_p[k][j] * row_p[k][i];
 			re(k,row)
 				Q.row_p[k][i] -= R.row_p[j][i] * Q.row_p[k][j];
 		}
-		T temp=T();
-		re(k, row)
-			R.row_p[i][i] += Q.row_p[k][i] * Q.row_p[k][i];
-		R.row_p[i][i] = sqrt(R.row_p[i][i]);//必须定义求根号。
+
+		two_norm(R.row_p[i][i], Q.row_p, i, row);
+		//re(k, row)
+			//R.row_p[i][i] += Q.row_p[k][i] * Q.row_p[k][i];
+		//R.row_p[i][i] = sqrt(R.row_p[i][i]);//必须定义求根号。
 		if (R.row_p[i][i]==T())
 			throw"three must be something wrong";
 		re(k, row)
 			Q.row_p[k][i] /= R.row_p[i][i];
 	}
+}
+
+Template(void) House(const deri_matrix& mat, unsigned r, unsigned c, T* ans)
+{
+	T temp;
+	two_norm(temp, mat.row_p + r, c, mat.row - r);
+	ans[0] = mat.row_p[r][c] + ((mat.row_p[r][c] > 0) ? temp : T() - temp);
+	for (int i = 1; i+r< mat.row; i++)
+		ans[i] = mat.row_p[r + i][c];
+}
+
+Template(void) qr(deri_matrix& Q, deri_matrix& R) const
+{
+	Q = deri_matrix(row, col);
+	deri_matrix  r = deri_matrix(row, col);
+	R = deri_matrix(col, col);
+	re(i, row)//单位矩阵。
+		Q.row_p[i][i] = 1;
+	r = static_cast<const deri_matrix&>(*this);
+	T* temp = new T[col];
+	T *u = new T[row];
+	T norm;
+	re(i, col)
+	{
+		House(r, i, i, u + i);
+		dot_product(norm, u + i, u + i, row - i);
+		for (int j = i; j < col; j++)//todo 第一列并不用计算。
+			dot_product(temp[j], u + i, r.row_p + i, j, row - i);
+		for (int j = i; j < row; j++)
+		{
+			for (int k = i; k < col; k++)//todo 可以在这里把R填上。
+			{
+				r.row_p[j][k] -= 2 * u[j] * temp[k] / norm;
+			}
+		}
+		for (int j = 0; j < col; j++)
+			dot_product(temp[j], u + i, Q.row_p[j] + i, row - i);
+		for (int j = 0; j < row; j++)
+			for (int k = i; k < col; k++)
+				Q.row_p[j][k] -= 2 * u[k] * temp[j] / norm;
+	}
+	re(i, col)
+		re(j, col)
+			R.row_p[i][j] = r.row_p[i][j];
+	delete[] temp;
+	delete[] u;
 }
 
 
@@ -501,7 +580,7 @@ class Matrix:public bas_matrix<Matrix<value_type>,value_type>
 public:
 	Matrix(unsigned r, unsigned c) :bas_matrix(r, c) {}
 	Matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
-	Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
+	//Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(const Matrix& other) :bas_matrix(other) {}
 	Matrix& operator=(const Matrix& other)
 	{

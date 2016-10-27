@@ -79,7 +79,7 @@ int main()
 		cin >> A;
 		cout << A << endl;
 		Matrix<double> q, r;
-		A.QR(q, r);
+		A.qr(q, r);
 		cout << q << endl << r << endl;
 		cout << A - q*r << endl;
 		cout << q.transform()*q << endl;
@@ -91,7 +91,7 @@ int main()
 			re(j, 5)
 			A[i][j] = x_n(i+1, j);
 		cout << A << endl;
-		A.QR(q, r);
+		A.qr(q, r);
 		cout << (A.transform()*A).inverse()*A.transform()*b<<endl;
 		cout << r.inverse()*q.transform()*b<<endl;
 	}
