@@ -88,7 +88,7 @@ int main()
 		Matrix<double> b;
 		cin >> b;
 		re(i, 5)
-			re(j, 5)
+			re(j, 4)
 			A[i][j] = x_n(i+1, j);
 		cout << A << endl;
 		A.qr(q, r);

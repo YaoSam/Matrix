@@ -100,6 +100,7 @@ public:
 	void QR                (deri_matrix& Q,deri_matrix& R)const;
 	static void House      (const deri_matrix& mat, unsigned r, unsigned c,T* ans);
 	void qr                (deri_matrix& Q, deri_matrix& R)const;
+	deri_matrix qr         (const deri_matrix& b)const;
 	virtual ~bas_matrix();
 };
 
@@ -532,13 +533,14 @@ Template(void) House(const deri_matrix& mat, unsigned r, unsigned c, T* ans)
 
 Template(void) qr(deri_matrix& Q, deri_matrix& R) const
 {
+	deri_matrix q(row,row);
 	Q = deri_matrix(row, col);
-	deri_matrix  r = deri_matrix(row, col);
+	deri_matrix  r(row, col);
 	R = deri_matrix(col, col);
 	re(i, row)//单位矩阵。
-		Q.row_p[i][i] = 1;
+		q.row_p[i][i] = 1;
 	r = static_cast<const deri_matrix&>(*this);
-	T* temp = new T[col];
+	T* temp = new T[row];
 	T *u = new T[row];
 	T norm;
 	re(i, col)
@@ -554,18 +556,27 @@ Template(void) qr(deri_matrix& Q, deri_matrix& R) const
 				r.row_p[j][k] -= 2 * u[j] * temp[k] / norm;
 			}
 		}
-		for (int j = 0; j < col; j++)
-			dot_product(temp[j], u + i, Q.row_p[j] + i, row - i);
 		for (int j = 0; j < row; j++)
-			for (int k = i; k < col; k++)
-				Q.row_p[j][k] -= 2 * u[k] * temp[j] / norm;
+			dot_product(temp[j], u + i, q.row_p[j] + i, row - i);
+		for (int j = 0; j < row; j++)
+			for (int k = i; k < row; k++)
+				q.row_p[j][k] -= 2 * u[k] * temp[j] / norm;
 	}
 	re(i, col)
 		re(j, col)
 			R.row_p[i][j] = r.row_p[i][j];
+	re(i, row)
+		re(j, col)
+			Q.row_p[i][j] = q.row_p[i][j];
 	delete[] temp;
 	delete[] u;
 }
+
+Template(deri_matrix) qr(const deri_matrix& b) const
+{
+	
+}
+
 
 
 Template()~bas_matrix()
