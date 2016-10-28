@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="资源文件\debug">
+      <UniqueIdentifier>{505d9c29-a8e1-4ed5-b812-1e2c050e6d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="资源文件\release">
+      <UniqueIdentifier>{a79608c4-fe89-4645-80bc-472ebdb6ce0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -31,11 +37,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\Debug\in.txt">
-      <Filter>资源文件</Filter>
-    </Text>
     <Text Include="..\Debug\out.txt">
-      <Filter>资源文件</Filter>
+      <Filter>资源文件\debug</Filter>
+    </Text>
+    <Text Include="..\Debug\in.txt">
+      <Filter>资源文件\debug</Filter>
+    </Text>
+    <Text Include="..\Release\in.txt">
+      <Filter>资源文件\release</Filter>
+    </Text>
+    <Text Include="..\Release\out.txt">
+      <Filter>资源文件\release</Filter>
     </Text>
   </ItemGroup>
 </Project>

@@ -72,24 +72,30 @@ namespace UnitTest1
 		}
 		TEST_METHOD(Ans_Matrix)
 		{
-			fstream in("in.txt", ios::in);
-			fstream out("out.txt", ios::out);
-			Matrix<double> b, A;
-			in >> A >> b;
-			Matrix<double> q, r;
-			A.qr(q, r);
-			Matrix<double> ans = r.inverse()*q.transform() - (A.transform()*A).inverse()*A.transform();
-			re(i, ans.Row())
-				re(j, ans.Col())
+			try
 			{
-				if (abs(ans[i][j])>1e-10) 
+
+				fstream in("in.txt", ios::in);
+				fstream out("out.txt", ios::out);
+				Matrix<double> b, A;
+				in >> A >> b;
+				Matrix<double> q, r;
+				A.qr(q, r);
+				Matrix<double> ans = r.inverse()*q.transform() - (A.transform()*A).inverse()*A.transform();
+				re(i, ans.Row())
+					re(j, ans.Col())
 				{
-					out << ans;
-					Assert::Fail();
+					if (abs(ans[i][j]) > 1e-10)
+					{
+						out << ans;
+						Assert::Fail();
+					}
 				}
+				in.close();
+				out.close();
 			}
-			in.close();
-			out.close();
+			catch (const char * error) { debug(error); }
+
 		}		
 		TEST_METHOD(Householder_GramSchmidt)
 		{
@@ -166,5 +172,11 @@ namespace UnitTest1
 			in.close();
 			out.close();
 		}
+	};
+
+	TEST_CLASS(Normal_Functions)
+	{
+	public:
+
 	};
 }

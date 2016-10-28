@@ -413,7 +413,7 @@ Template(deri_matrix) ChosenLU()
 
 Template(deri_matrix) LU_solve(const deri_matrix & input) const
 {
-	if (input.row != row)
+	if (input.row != row||row==0||col==0)
 		throw "error";
 	deri_matrix ans(input.row, 1);
 	T temp = 0;//先累加，减少误差。
