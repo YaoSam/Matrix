@@ -84,7 +84,8 @@ public:
 		}
 		return in;
 	}
-
+	unsigned Row           ()const { return row; }
+	unsigned Col           ()const { return col; }
 	deri_matrix& operator+=(const deri_matrix& other);
 	deri_matrix& operator*=(const deri_matrix& other);
 	deri_matrix  operator+ (const deri_matrix& other)const;
