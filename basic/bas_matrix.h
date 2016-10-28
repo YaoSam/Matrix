@@ -533,48 +533,86 @@ Template(void) House(const deri_matrix& mat, unsigned r, unsigned c, T* ans)
 
 Template(void) qr(deri_matrix& Q, deri_matrix& R) const
 {
-	deri_matrix q(row,row);
+	if (row < col)throw "Not Supported yet(^_^";
+	deri_matrix temp_q(row,row);
 	Q = deri_matrix(row, col);
-	deri_matrix  r(row, col);
+	deri_matrix  temp_r(row, col);
 	R = deri_matrix(col, col);
 	re(i, row)//单位矩阵。
-		q.row_p[i][i] = 1;
-	r = static_cast<const deri_matrix&>(*this);
+		temp_q.row_p[i][i] = 1;
+	temp_r = static_cast<const deri_matrix&>(*this);
 	T* temp = new T[row];
 	T *u = new T[row];
 	T norm;
 	re(i, col)
 	{
-		House(r, i, i, u + i);
+		//计算u和||u||
+		House(temp_r, i, i, u + i);
 		dot_product(norm, u + i, u + i, row - i);
-		for (int j = i; j < col; j++)//todo 第一列并不用计算。
-			dot_product(temp[j], u + i, r.row_p + i, j, row - i);
-		for (int j = i; j < row; j++)
-		{
-			for (int k = i; k < col; k++)//todo 可以在这里把R填上。
-			{
-				r.row_p[j][k] -= 2 * u[j] * temp[k] / norm;
-			}
-		}
+		//计算R
+		//先算u'*A
+		for (int j = i; j < col; j++)
+			dot_product(temp[j], u + i, temp_r.row_p + i, j, row - i);
+		//再算u*A
+		for (int k = i; k < col; k++)//手动展开循环。j=i的时候。填入R。
+			R.row_p[i][k] = (temp_r.row_p[i][k] -= 2 * u[i] * temp[k] / norm);
+		for (int j = i + 1; j < row; j++)//该列默认为0不用算。
+			 temp_r.row_p[j][i] = 0;
+		for (int j = i + 1; j < row; j++)
+			for (int k = i + 1; k < col; k++)
+				temp_r.row_p[j][k] -= 2 * u[j] * temp[k] / norm;
+		//开始计算Q
+		//先算P*u
 		for (int j = 0; j < row; j++)
-			dot_product(temp[j], u + i, q.row_p[j] + i, row - i);
-		for (int j = 0; j < row; j++)
-			for (int k = i; k < row; k++)
-				q.row_p[j][k] -= 2 * u[k] * temp[j] / norm;
+			dot_product(temp[j], u + i, temp_q.row_p[j] + i, row - i);
+		//再算P*u'
+		for (int j = 0; j < row; j++)//手动展开循环。k=i的时候，填入Q。
+			Q.row_p[j][i] = temp_q.row_p[j][i] -= 2 * u[i] * temp[j] / norm;
+		for (int k = i + 1; k < row; k++)
+			for (int j = 0; j < row; j++)
+				temp_q.row_p[j][k] -= 2 * u[k] * temp[j] / norm;
 	}
-	re(i, col)
-		re(j, col)
-			R.row_p[i][j] = r.row_p[i][j];
-	re(i, row)
-		re(j, col)
-			Q.row_p[i][j] = q.row_p[i][j];
 	delete[] temp;
 	delete[] u;
 }
 
 Template(deri_matrix) qr(const deri_matrix& b) const
 {
-	
+	if (row < col)throw "Not Supported yet(^_^";
+	deri_matrix  temp_r(row, col), temp_ans(b), ans(col, 1);
+	temp_r  = static_cast<const deri_matrix&>(*this);
+	T* temp = new T[row];
+	T *u    = new T[row];
+	T norm, temp_y;
+	re(i, col)
+	{
+		//计算u和||u||
+		House(temp_r, i, i, u + i);
+		dot_product(norm, u + i, u + i, row - i);
+		//计算R
+		//先算u'*A
+		for (int j = i; j < col; j++)
+			dot_product(temp[j], u + i, temp_r.row_p + i, j, row - i);
+		//再算u*A
+		for (int k = i; k < col; k++)//省略掉了一列。因为都是0，不会用到。
+			temp_r.row_p[i][k] -= 2 * u[i] * temp[k] / norm;
+		for (int j = i + 1; j < row; j++)
+			for (int k = i + 1; k < col; k++)
+				temp_r.row_p[j][k] -= 2 * u[j] * temp[k] / norm;
+		//求Q'*b
+		dot_product(temp_y, u + i, temp_ans.row_p + i, 0, row - i);
+		for (int j = i; j < row; j++)
+			temp_ans.row_p[j][0] -= 2 * temp_y*u[j] / norm;
+	}
+	//求R^-1*b，由于R是上三角。
+	for (int i = col - 1; i >= 0; i--)
+	{
+		dot_product(temp_y, temp_r.row_p[i] + i + 1, temp_ans.row_p + i + 1, 0, col- i - 1);
+		ans.row_p[i][0] = (temp_ans.row_p[i][0] -= temp_y) /= temp_r.row_p[i][i];
+	}
+	delete[] temp;
+	delete[] u;
+	return ans;
 }
 
 

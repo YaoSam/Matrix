@@ -83,8 +83,7 @@ int main()
 		cout << q << endl << r << endl;
 		cout << A - q*r << endl;
 		cout << q.transform()*q << endl;
-		cout << r.inverse()*q.transform() << endl;
-		cout << (A.transform()*A).inverse()*A.transform() << endl;
+		cout << r.inverse()*q.transform() - (A.transform()*A).inverse()*A.transform() << endl;
 		Matrix<double> b;
 		cin >> b;
 		re(i, 5)
@@ -94,6 +93,7 @@ int main()
 		A.qr(q, r);
 		cout << (A.transform()*A).inverse()*A.transform()*b<<endl;
 		cout << r.inverse()*q.transform()*b<<endl;
+		cout << A.qr(b)<<endl;
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
