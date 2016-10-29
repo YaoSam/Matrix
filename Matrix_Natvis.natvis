@@ -17,7 +17,7 @@
       <Expand>
         <IndexListItems>
           <Size>row*col</Size>
-          <ValueNode>(*(row_p+$i/row))[$i%col]</ValueNode>
+          <ValueNode>(*(row_p+$i/col))[$i%col]</ValueNode>
         </IndexListItems>
       </Expand>
   </Type>

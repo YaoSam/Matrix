@@ -1,6 +1,8 @@
 #include "big_int.h"
 #include <iostream>
 #include <vector>
+#undef re
+#define re(i,n) for(int i=0,m=n;i<m;i++)
 const int ten[6] = { 1,10,100,1000,10000,100000 };
 big_int::big_int(const string& num) :
 	length(0),
@@ -141,7 +143,7 @@ big_int& big_int::Plus(const big_int& other)
 	static const big_int zero;
 	if (other.length == 0) return *this;
 	int origin_len = length;
-	length = length > other.length ? length : other.length + 1;
+	length = (length > other.length ? length : other.length) + 1;
 	if (size < length)
 	{
 		size = length * 2 ;
