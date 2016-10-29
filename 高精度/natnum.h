@@ -29,6 +29,15 @@ public:
 		static big_int one("1");
 		return me.down == one ? (out << me.up) : (out << me.up << '/' << me.down);
 	}
+	friend istream& operator>>(istream& in, natnum& me)
+	{
+		me.down = 1;
+		int a;
+		in >> a;
+		me.up = a;
+		return in;
+	}
+
 	natnum& operator+=(const natnum& other)
 	{
 		create(up*other.down + down*other.up, down*other.down);

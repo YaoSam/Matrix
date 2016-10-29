@@ -374,7 +374,7 @@ namespace UnitTest1
 			out.close();
 		}
 	};
-	TEST_CLASS(高精度)
+	TEST_CLASS(高精度矩阵)
 	{
 	public:
 		TEST_METHOD(inverse)
@@ -402,6 +402,40 @@ namespace UnitTest1
 				}
 
 			out.close();
+		}
+		TEST_METHOD(random_inverse)
+		{
+			try {
+				fstream out("out.txt", ios::out);
+				srand(time(nullptr));//每次都是同一次数据
+				const unsigned Test_size = 15;
+				const unsigned Test_case = 100;
+				Matrix<q> A(Test_size, Test_size);
+				Matrix<q> b(Test_size, 1);
+				re(t, Test_case)
+				{
+					re(i, Test_size)
+					{
+						b[i][0] = rand() % (Test_size );
+						re(j, Test_size)
+							A[i][j] = rand() % (Test_size );
+					}
+					auto ans = A.inverse()*b;
+					auto delta = A*ans - b;
+					re(i, delta.Row())
+					{
+						if (!(delta[i][0] == 0))
+						{
+							out << "test_case: " << t << endl;
+							out << A << endl << b << endl << ans << endl << A*ans << endl << delta << endl;
+							Assert::Fail();
+						}
+					}
+
+				}
+				out.close();
+			}
+			catch (const char* error) { debug(error); }
 		}
 		TEST_METHOD(solve)
 		{
@@ -463,5 +497,94 @@ namespace UnitTest1
 			out.close();
 		}
 
+	};
+	TEST_CLASS(自然数矩阵)
+	{
+	public:
+		TEST_METHOD(inverse)
+		{
+			fstream out("out.txt", ios::out);
+			const unsigned n = 17;
+			Matrix<N> A(n, n);
+			re(i, n)
+			{
+				A[i][i] = 6;
+				if (i > 0)
+				{
+					A[i - 1][i] = 1;
+					A[i][i - 1] = 8;
+				}
+			}
+			auto ans = A.inverse()*A;
+			re(i, n)
+				re(j, n)
+				if ((i == j && !(ans[i][i] == 1)
+					|| (i != j && !(ans[i][j] == 0))))
+				{
+					out << A.inverse() << endl << ans << endl;
+					Assert::Fail();
+				}
+
+			out.close();
+		}
+		TEST_METHOD(solve)
+		{
+			fstream out("out.txt", ios::out);
+			const unsigned n = 17;
+			Matrix<N> A(n, n);
+			Matrix<N> B(n, 1);
+			B[0][0] = 7;
+			re(i, n)
+			{
+				A[i][i] = 6;
+				if (i > 0)
+				{
+					A[i - 1][i] = 1;
+					A[i][i - 1] = 8;
+					B[0][i] = 15;
+				}
+			}
+			B[0][n - 1] = 14;
+			auto ans = A.solve(B);
+			re(i, ans.Row())
+			{
+				if (!(ans[i][0] == 1))
+				{
+					out << ans << endl;
+					Assert::Fail();
+				}
+			}
+			out.close();
+		}
+		TEST_METHOD(LU_solve)
+		{
+			fstream out("out.txt", ios::out);
+			const unsigned n = 17;
+			Matrix<N> A(n, n);
+			Matrix<N> B(n, 1);
+			B[0][0] = 7;
+			re(i, n)
+			{
+				A[i][i] = 6;
+				if (i > 0)
+				{
+					A[i - 1][i] = 1;
+					A[i][i - 1] = 8;
+					B[0][i] = 15;
+				}
+			}
+			B[0][n - 1] = 14;
+			auto P = A.ChosenLU();
+			auto ans = A.LU_solve(P*B);
+			re(i, ans.Row())
+			{
+				if (!(ans[i][0] == 1))
+				{
+					out << ans << endl;
+					Assert::Fail();
+				}
+			}
+			out.close();
+		}
 	};
 }

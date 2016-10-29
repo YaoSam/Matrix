@@ -295,8 +295,9 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 	{
 		for (unsigned j = i; j < row; j += n)
 			re(k, other.col)
-				re(l, col)
-					temp_row_p[j][k] = row_p[j][l] * other.row_p[l][k];
+				dot_product(temp_row_p[j][k], row_p[j], other.row_p, k, col);
+				//re(l, col)
+					//temp_row_p[j][k] = row_p[j][l] * other.row_p[l][k];
 	}));
 	for (auto& i : Thread)
 		i.join();
@@ -341,8 +342,9 @@ Template(deri_matrix) operator*(const deri_matrix & other) const
 		for (int j = i; j < row; j += n)
 		{
 			re(k, other.col)
-				re(l, col)
-				ans.row_p[j][k] += row_p[j][l] * other.row_p[l][k];
+				dot_product(ans.row_p[j][k], row_p[j], other.row_p, k, col);
+				//re(l, col)
+				//ans.row_p[j][k] += row_p[j][l] * other.row_p[l][k];
 		}
 	}));
 	for (auto& i : Thread)
@@ -446,6 +448,7 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	re(i, row)
 	{
 		dot_product(temp, me.row_p[i], ans.data, i);
+		//temp = T(0);
 		//for (unsigned k = 0; k + 1 <= i; k++)
 			//temp += me.row_p[i][k] * ans.data[k];
 		ans.data[i] = b.data[i] - temp;
@@ -453,6 +456,7 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	for (int i = row - 1; i >= 0; i--)
 	{
 		dot_product(temp, me.row_p[i] + i + 1, ans.data + i + 1, row - i - 1);
+		//temp = T(0);
 		//for (unsigned k = i + 1; k < row; k++)
 			//temp += me.row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= me.row_p[i][i];
@@ -471,21 +475,23 @@ Template(deri_matrix) inverse() const
 	re(thread_i,thread_num)
 	Thread.push_back(thread([this,thread_i,n,&ans,&me,&b]()
 	{
-		T temp = 0;//先累加，减少误差。
+		T temp = T();//先累加，减少误差。
 		for (int j = thread_i; j < row; j += n)
 		{
 			re(i, row)
 			{
 				dot_product(temp, me.row_p[i], ans.row_p, j, i);
+				//temp = T();
 				//for (unsigned k = 0; k + 1 <= i; k++)
-					//temp += me.row_p[i][k] * ans.row_p[k][j];
+				//	temp += me.row_p[i][k] * ans.row_p[k][j];
 				ans.row_p[i][j] = b.row_p[i][j] - temp;
 			}
 			for (int i = row - 1; i >= 0; i--)
 			{
 				dot_product(temp, me.row_p[i] + i + 1, ans.row_p + i + 1, j, row - i - 1);
+				//temp = T();
 				//for (unsigned k = i + 1; k < row; k++)
-					//temp += me.row_p[i][k] * ans.row_p[k][j];
+				//	temp += me.row_p[i][k] * ans.row_p[k][j];
 				(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
 			}
 		}

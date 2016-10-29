@@ -13,6 +13,7 @@
 // TODO: 在此处引用程序需要的其他头文件
 #include "../basic/bas_matrix.h"
 #include "../高精度/natnum.h"
+#include "../自然数/n.h"
 #include <assert.h>
 #include <string>
 #include <sstream>
