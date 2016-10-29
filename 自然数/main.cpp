@@ -43,7 +43,7 @@ int main()
 #endif
 	try {
 		/*Ö÷º¯Êý*/
-		N a[100],sum;
+		N a[100][100],sum;
 		//unsigned i = 0;
 		//while (cin >> a[i++])
 		//{
@@ -52,9 +52,10 @@ int main()
 		//}
 		int m, n;
 		cin >> m >> n;
-		re(i, m*n)
-			cin >> a[i];
-		Matrix<N> one(a, m, n);
+		Matrix<N> one(m, n);
+		re(i, m)
+			re(j, n)
+			cin >> one[i][j];
 		cout << one << endl;
 		cout << one.inverse() << endl;
 		cout << one*one << endl;

@@ -77,7 +77,17 @@ int main()
 #endif
 	try {
 		/*Ö÷º¯Êý*/
-		test();
+		//test();
+		//thread_num = 1;
+		Matrix<q> A, b;
+		cin >> A >> b;
+		//auto p = A.ChosenLU();
+		//cout << Matrix<int>::one(5) << endl;
+		//cout << p << endl;
+		//cout << A << endl;
+		cout << A*(A.inverse()*b)-b << endl;
+		//cout << A*A.inverse() << endl;
+		//cout << A*(A.inverse()*b) - b << endl;
 		//string a,b;
 		//vector<big_int> num;
 		//while (cin >> a >> b)

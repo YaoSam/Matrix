@@ -17,7 +17,6 @@ void debug(const char * errorInfo)
 namespace UnitTest1
 {		
 	const double MAX_ERROR = 1e-8;
-	extern unsigned thread_num;
 	TEST_CLASS(Matrix_QR)
 	{
 	public:
@@ -407,21 +406,21 @@ namespace UnitTest1
 		{
 			try {
 				fstream out("out.txt", ios::out);
-				srand(time(nullptr));//每次都是同一次数据
+				//srand(time(nullptr));//每次都是同一次数据
 				const unsigned Test_size = 15;
 				const unsigned Test_case = 100;
 				Matrix<q> A(Test_size, Test_size);
-				Matrix<q> b(Test_size, 1);
+				Matrix<q> b(Test_size, 1),ans,delta;
 				re(t, Test_case)
 				{
 					re(i, Test_size)
 					{
-						b[i][0] = rand() % (Test_size );
+						b[i][0] = rand() % (Test_size *10);
 						re(j, Test_size)
-							A[i][j] = rand() % (Test_size );
+							A[i][j] = rand() % (Test_size*10 );
 					}
-					auto ans = A.inverse()*b;
-					auto delta = A*ans - b;
+					ans = A.inverse()*b;
+					delta = A*ans - b;
 					re(i, delta.Row())
 					{
 						if (!(delta[i][0] == 0))
@@ -431,9 +430,10 @@ namespace UnitTest1
 							Assert::Fail();
 						}
 					}
-
+					
 				}
 				out.close();
+				
 			}
 			catch (const char* error) { debug(error); }
 		}
@@ -462,6 +462,36 @@ namespace UnitTest1
 				{
 					out << ans << endl;
 					Assert::Fail();
+				}
+			}
+			out.close();
+		}		
+		TEST_METHOD(random_solve)
+		{
+			fstream out("out.txt", ios::out);
+			srand(time(nullptr));//每次都是同一次数据
+			const unsigned Test_size = 20;
+			const unsigned Test_case = 100;
+			Matrix<q> A(Test_size, Test_size);
+			Matrix<q> b(Test_size, 1);
+			re(t, Test_case)
+			{
+				re(i, Test_size)
+				{
+					b[i][0] = rand() % (Test_size);
+					re(j, Test_size)
+						A[i][j] = rand() % (Test_size);
+				}
+				auto ans = A.solve(b);
+				auto delta = A*ans - b;
+				re(i, delta.Row())
+				{
+					if (!(delta[i][0]==0))
+					{
+						out << "test_case: " << t << endl;
+						out << A << endl << b << endl << ans << endl << A*ans << endl << delta << endl;
+						Assert::Fail();
+					}
 				}
 			}
 			out.close();

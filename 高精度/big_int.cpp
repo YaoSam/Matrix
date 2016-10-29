@@ -1,9 +1,11 @@
 #include "big_int.h"
 #include <iostream>
+#include <mutex>
 #include <vector>
 #undef re
 #define re(i,n) for(int i=0,m=n;i<m;i++)
 const int ten[6] = { 1,10,100,1000,10000,100000 };
+mutex _lock;
 big_int::big_int(const string& num) :
 	length(0),
 	data(nullptr),
@@ -163,13 +165,6 @@ big_int& big_int::Plus(const big_int& other)
 		}
 	if (data[length - 1] == 0)
 		length--;
-	if(length==0)
-	{
-		sign = false;
-		size = 0;
-		delete[]data;
-		data = nullptr;
-	}
 	return *this;
 }
 
@@ -384,8 +379,10 @@ big_int operator/(big_int a, const big_int&b)//TODO ³ý·¨µÄ·ûºÅ¡£
 	static vector<big_int> two_arr(1,temp);
 	static const float coef = log2(10);
 	int len = int(coef*(4*a.length + 1));
+	_lock.lock();
 	while (two_arr.size() < len)
 			two_arr.push_back(two_arr[two_arr.size() - 1] * two);
+	_lock.unlock();
 	while (!cmp_abs_smaller(two_arr[len - 1],a))
 		len--;
 	temp_b = two_arr[len - 1] * b;
