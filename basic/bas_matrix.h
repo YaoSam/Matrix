@@ -30,11 +30,11 @@ protected:
 	T*data;
 	T**row_p;
 	unsigned row, col;
-	void static dot_product(T (&ans), T* a, T** b, unsigned c, unsigned num);
-	void static dot_product(T(&ans), T** a, unsigned ac, T** b, unsigned bc, unsigned num);
-	void static dot_product(T(&ans), T* a, T* b, unsigned num);
-	void static two_norm   (T & ans, T *a,unsigned num);
-	void static two_norm   (T & ans, T **a,unsigned c, unsigned num);
+	void static dot_product(T &ans, T *  a, T** b, unsigned c, unsigned num);
+	void static dot_product(T &ans, T ** a,        unsigned ac, T** b, unsigned bc, unsigned num);
+	void static dot_product(T &ans, T *  a, T* b,  unsigned num);
+	void static two_norm   (T &ans, T *  a,        unsigned num);
+	void static two_norm   (T &ans, T ** a,        unsigned c, unsigned num);
 	void ExchangeR		   (unsigned r1, unsigned r2)const//交换r1,r1行
 	{
 		swap(row_p[r1], row_p[r2]);
@@ -419,10 +419,11 @@ Template(deri_matrix) LU_solve(const deri_matrix & input) const
 	T temp = 0;//先累加，减少误差。
 	re(i, row)
 	{
-		for (unsigned k = 0; k + 1 <= i; k++)
-			temp += row_p[i][k] * ans.data[k];
+		dot_product(temp, row_p[i], ans.data, i);
+		//for (unsigned k = 0; k < i; k++)
+			//temp += row_p[i][k] * ans.data[k];
 		ans.data[i] = input.data[i] - temp;
-		temp        = T();//temp不能忘了重置。
+		//temp        = T();//temp不能忘了重置。
 	}
 	for (int i = row - 1; i >= 0; i--, temp = T())
 	{
@@ -444,12 +445,12 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	T temp = 0;//先累加，减少误差。
 	re(i, row)
 	{
-		for (unsigned k = 0; k + 1 <= i; k++)
-			temp += me.row_p[i][k] * ans.data[k];
+		dot_product(temp, me.row_p[i], ans.data, i);
+		//for (unsigned k = 0; k + 1 <= i; k++)
+			//temp += me.row_p[i][k] * ans.data[k];
 		ans.data[i] = b.data[i] - temp;
-		temp        = 0;//temp不能忘了重置。
 	}
-	for (int i = row - 1; i >= 0; i--, temp = 0)
+	for (int i = row - 1; i >= 0; i--)
 	{
 		dot_product(temp, me.row_p[i] + i + 1, ans.data + i + 1, row - i - 1);
 		//for (unsigned k = i + 1; k < row; k++)
@@ -475,15 +476,16 @@ Template(deri_matrix) inverse() const
 		{
 			re(i, row)
 			{
-				for (unsigned k = 0; k + 1 <= i; k++)
-					temp += me.row_p[i][k] * ans.row_p[k][j];
+				dot_product(temp, me.row_p[i], ans.row_p, j, i);
+				//for (unsigned k = 0; k + 1 <= i; k++)
+					//temp += me.row_p[i][k] * ans.row_p[k][j];
 				ans.row_p[i][j] = b.row_p[i][j] - temp;
-				temp = T(0);//temp不能忘了重置。
 			}
-			for (int i = row - 1; i >= 0; i--, temp = T(0))
+			for (int i = row - 1; i >= 0; i--)
 			{
-				for (unsigned k = i + 1; k < row; k++)
-					temp += me.row_p[i][k] * ans.row_p[k][j];
+				dot_product(temp, me.row_p[i] + i + 1, ans.row_p + i + 1, j, row - i - 1);
+				//for (unsigned k = i + 1; k < row; k++)
+					//temp += me.row_p[i][k] * ans.row_p[k][j];
 				(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
 			}
 		}

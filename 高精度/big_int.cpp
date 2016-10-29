@@ -37,31 +37,32 @@ big_int::big_int(const string& num) :
 
 }
 
-big_int::big_int(int num) :
+big_int::big_int(const int &num) :
 	data(nullptr), sign(num < 0), length(0), size(0)
 {
 	if (num == 0)return;
-	if (sign)num *= -1;
+	int n = num;
+	if (sign)n *= -1;
 	if (num<10000)
 	{
 		size    = length = 1;
 		data    = new int[1];
-		data[0] = num;
+		data[0] = n;
 	}
 	else if (num<100000000)
 	{
 		size    = length = 2;
 		data    = new int[2];
-		data[0] = num % 10000;
-		data[1] = num / 10000;
+		data[0] = n % 10000;
+		data[1] = n / 10000;
 	}
 	else
 	{
 		size    = length = 3;
 		data    = new int[3];
-		data[0] = num % 10000;
-		data[1] = (num / 10000) % 10000;
-		data[2] = num / 100000000;
+		data[0] = n % 10000;
+		data[1] = (n / 10000) % 10000;
+		data[2] = n / 100000000;
 	}
 }
 

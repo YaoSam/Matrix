@@ -8,6 +8,7 @@ public:
 	{
 		create(a, b);
 	}
+	natnum(const int & n):up(n),down(1){}
 	void create(const big_int&a = 0, const big_int&b = 1)
 	{
 		big_int temp = gcd(a, b);

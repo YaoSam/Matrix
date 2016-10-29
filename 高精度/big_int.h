@@ -24,7 +24,7 @@ class big_int
 public:
 	big_int():data(nullptr),length(0),sign(false),size(0){}
 	big_int(const string& num);
-	big_int(int num);
+	big_int(const int &num);
 	big_int(const big_int &other);
 	big_int& operator=(const big_int& other);
 	~big_int()
