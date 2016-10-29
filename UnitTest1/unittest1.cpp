@@ -16,7 +16,7 @@ void debug(const char * errorInfo)
 
 namespace UnitTest1
 {		
-	const double MAX_ERROR = 1e-10;
+	const double MAX_ERROR = 1e-8;
 	extern unsigned thread_num;
 	TEST_CLASS(Matrix_QR)
 	{
@@ -50,6 +50,31 @@ namespace UnitTest1
 			in.close();
 			out.close();
 		}
+		TEST_METHOD(HouseholderQR分解是否与A相等_random)
+		{
+			fstream out("out.txt", ios::out);
+			srand(time(nullptr));
+			const unsigned Test_size_r = 100, Test_size_c = 50;
+			const unsigned Test_case = 100;
+			Matrix<double> b(Test_size_r, 1), A(Test_size_r, Test_size_c);
+			Matrix<double> q, r;
+			re(t, Test_case)
+			{
+				re(i, A.Row())
+					re(j, A.Col())
+					A[i][j] = rand() % Test_size_r;
+				A.qr(q, r);
+				auto ans = (A - q*r);
+				re(i, ans.Row())
+					re(j, ans.Col())
+					if (abs(ans[i][j]) > MAX_ERROR)
+					{
+						out << ans;
+						Assert::Fail();
+					}
+			}
+			out.close();
+		}
 		TEST_METHOD(Q是否为幺正基)
 		{
 			fstream in("in.txt", ios::in);
@@ -72,11 +97,34 @@ namespace UnitTest1
 			in.close();
 			out.close();
 		}
+		TEST_METHOD(Q是否为幺正基_random)
+		{
+			fstream out("out.txt", ios::out);
+			const unsigned Test_size_r = 100, Test_size_c = 50;
+			const unsigned Test_case = 100;
+			Matrix<double> b(Test_size_r, 1), A(Test_size_r, Test_size_c);
+			Matrix<double> q, r;
+			re(t, Test_case)
+			{
+				re(i, A.Row())
+					re(j, A.Col())
+					A[i][j] = rand() % Test_size_r;
+				A.qr(q, r);
+				auto ans = q.transform()*q-Matrix<double>::one(q.Col());
+				re(i, ans.Row())
+					re(j, ans.Col())
+					if (abs(ans[i][j]) > MAX_ERROR)
+					{
+						out << ans;
+						Assert::Fail();
+					}
+			}
+			out.close();
+		}
 		TEST_METHOD(Householder与普通法对比)
 		{
 			try
 			{
-
 				fstream in("in.txt", ios::in);
 				fstream out("out.txt", ios::out);
 				Matrix<double> b, A;
@@ -209,7 +257,7 @@ namespace UnitTest1
 			fstream out("out.txt", ios::out);
 			srand(time(nullptr));//每次都是同一次数据
 			const unsigned Test_size = 50;
-			const unsigned Test_case = 100;
+			const unsigned Test_case = 50;
 			Matrix<double> A(Test_size, Test_size);
 			Matrix<double> b(Test_size, 1);
 			re(t, Test_case)

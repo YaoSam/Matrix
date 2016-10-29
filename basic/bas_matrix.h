@@ -35,7 +35,7 @@ protected:
 	void static dot_product(T &ans, T *  a, T* b,  unsigned num);
 	void static two_norm   (T &ans, T *  a,        unsigned num);
 	void static two_norm   (T &ans, T ** a,        unsigned c, unsigned num);
-	void ExchangeR		   (unsigned r1, unsigned r2)const//交换r1,r1行
+	void ExchangeR		  (unsigned r1, unsigned r2)const//交换r1,r1行
 	{
 		swap(row_p[r1], row_p[r2]);
 	}
@@ -50,8 +50,8 @@ protected:
 		re(i, row)
 			memset(row_p[i], 0, sizeof(T)*col);
 	}
-	deri_matrix static one(unsigned n);
 public:
+	deri_matrix static one(unsigned n);
 	bas_matrix                (unsigned r, unsigned c);
 	bas_matrix                (T **Data = nullptr, unsigned r = 0, unsigned c = 0);
 	bas_matrix                (const bas_matrix& other);
@@ -202,7 +202,7 @@ Template(deri_matrix) one(unsigned n)
 {
 	deri_matrix ans(n, n);
 	re(i, n)
-		ans.irow_p[i][i] = 1;
+		ans.row_p[i][i] = 1;
 	return ans;
 }
 
