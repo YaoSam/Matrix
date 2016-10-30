@@ -13,6 +13,7 @@ using namespace std;
 	return_type bas_matrix<deri_matrix, value_type>:: 
 inline unsigned process_num()
 {
+	cout << "hello" << endl;
 	SYSTEM_INFO info;
 	GetSystemInfo(&info);
 	return info.dwNumberOfProcessors;

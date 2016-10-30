@@ -5,7 +5,6 @@
 #undef re
 #define re(i,n) for(int i=0,m=n;i<m;i++)
 const int ten[6] = { 1,10,100,1000,10000,100000 };
-mutex _lock;
 big_int::big_int(const string& num) :
 	length(0),
 	data(nullptr),
@@ -352,6 +351,7 @@ big_int operator*(const big_int& a, const big_int& b)
 big_int operator/(big_int a, const big_int&b)//TODO 除法的符号。
 {
 	static const big_int zero("0"), one("1"), two("2");
+	static mutex _lock_two_arr;
 	if (b == zero)throw "can't / zero!";
 	if (b == one)return a;
 	if (cmp_abs_smaller(a, b))return zero;
@@ -379,10 +379,10 @@ big_int operator/(big_int a, const big_int&b)//TODO 除法的符号。
 	static vector<big_int> two_arr(1,temp);
 	static const float coef = log2(10);
 	int len = int(coef*(4*a.length + 1));
-	_lock.lock();
+	_lock_two_arr.lock();
 	while (two_arr.size() < len)
 			two_arr.push_back(two_arr[two_arr.size() - 1] * two);
-	_lock.unlock();
+	_lock_two_arr.unlock();
 	while (!cmp_abs_smaller(two_arr[len - 1],a))
 		len--;
 	temp_b = two_arr[len - 1] * b;

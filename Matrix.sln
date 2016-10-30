@@ -4,10 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basic", "basic\basic.vcxproj", "{C01662BC-8931-4494-9658-5640C1BA6397}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A} = {B0DB4E4C-CD80-42EB-BDF0-715914FD104A}
-		{C834E7FB-4675-4CFE-8752-F50F07B6A506} = {C834E7FB-4675-4CFE-8752-F50F07B6A506}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest1", "UnitTest1\UnitTest1.vcxproj", "{B5EC5C2E-BC77-41CA-9DB4-CA11C7E7C4B9}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -38,6 +34,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_自然数", "example_自然数\example_自然数.vcxproj", "{90128FFC-B955-4154-9F07-12AB79E2F8C9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A} = {B0DB4E4C-CD80-42EB-BDF0-715914FD104A}
+		{C01662BC-8931-4494-9658-5640C1BA6397} = {C01662BC-8931-4494-9658-5640C1BA6397}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_QR分解——householder", "example_QR分解——householder\example_QR分解——householder.vcxproj", "{6F0F56BF-ED50-4588-BC57-E5349C76A673}"
+	ProjectSection(ProjectDependencies) = postProject
 		{C01662BC-8931-4494-9658-5640C1BA6397} = {C01662BC-8931-4494-9658-5640C1BA6397}
 	EndProjectSection
 EndProject
@@ -132,6 +133,14 @@ Global
 		{90128FFC-B955-4154-9F07-12AB79E2F8C9}.Release|x64.Build.0 = Release|x64
 		{90128FFC-B955-4154-9F07-12AB79E2F8C9}.Release|x86.ActiveCfg = Release|Win32
 		{90128FFC-B955-4154-9F07-12AB79E2F8C9}.Release|x86.Build.0 = Release|Win32
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Debug|x64.ActiveCfg = Debug|x64
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Debug|x64.Build.0 = Debug|x64
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Debug|x86.ActiveCfg = Debug|Win32
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Debug|x86.Build.0 = Debug|Win32
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Release|x64.ActiveCfg = Release|x64
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Release|x64.Build.0 = Release|x64
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Release|x86.ActiveCfg = Release|Win32
+		{6F0F56BF-ED50-4588-BC57-E5349C76A673}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
