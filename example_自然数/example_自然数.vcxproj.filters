@@ -15,8 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="n.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <Text Include="in.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="out.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

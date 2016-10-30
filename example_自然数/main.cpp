@@ -25,8 +25,7 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
-//#include "n.h"
-#include"../高精度/big_int.h"
+#include "../自然数/n.h"
 #include "../basic/bas_matrix.h"
 using namespace std;
 #undef re
@@ -44,11 +43,25 @@ int main()
 #endif
 	try {
 		/*主函数*/
-		big_int a = 2;
-		re(i, 10)
-			cout << (a *= 2) << endl;
-
-			//cout << a << " " << b << " " << gcd(a, b)<<endl;
+		/*主函数*/
+		N a[100][100], sum;
+		//unsigned i = 0;
+		//while (cin >> a[i++])
+		//{
+		//	sum += a[i-1];
+		//	cout << a[i-1] <<"    "<< sum << endl;
+		//}
+		int m, n;
+		cin >> m >> n;
+		Matrix<N> one(m, n);
+		re(i, m)
+			re(j, n)
+			cin >> one[i][j];
+		cout << one << endl;
+		cout << one.inverse() << endl;
+		cout << one*one << endl;
+		cout << (one*one).inverse() << endl;
+		cout << one.inverse()*one.inverse() << endl;
 	}
 	catch (const char * error) { cout << error << endl; }
 	cout << "运行时间：" << clock() - BeginTime << endl;
