@@ -25,7 +25,10 @@
 #include <string>
 #include <time.h>
 #include <algorithm>
-#include "bas_matrix.h"
+#include"自然数/n.h"
+#include"高精度/big_int.h"
+#include "高精度/natnum.h"
+#include "basic/bas_matrix.h"
 #include <iomanip>
 using namespace std;
 #undef re

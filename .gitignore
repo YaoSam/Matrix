@@ -248,3 +248,4 @@ ModelManifest.xml
 *.diagsession
 /高精度/out.txt
 /高精度/高精度.vcxproj.samyao.nvuser
+/out.txt

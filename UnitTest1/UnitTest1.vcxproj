@@ -168,6 +168,20 @@
     <Text Include="..\Release\in.txt" />
     <Text Include="..\Release\out.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\basic\basic.vcxproj">
+      <Project>{c01662bc-8931-4494-9658-5640c1ba6397}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="..\自然数\自然数.vcxproj">
+      <Project>{b0db4e4c-cd80-42eb-bdf0-715914fd104a}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="..\高精度\高精度.vcxproj">
+      <Project>{c834e7fb-4675-4cfe-8752-f50f07b6a506}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

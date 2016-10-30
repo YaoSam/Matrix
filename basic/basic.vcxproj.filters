@@ -15,20 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="bas_matrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="in.txt">
-      <Filter>资源文件</Filter>
-    </Text>
-    <Text Include="out.txt">
-      <Filter>资源文件</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bas_matrix.h">

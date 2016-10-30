@@ -43,7 +43,7 @@ public:
 	friend bool    operator>=   (const big_int&a, const big_int&b) { return !(a < b); }
 	big_int&       operator+=   (const big_int& other);
 	big_int&       operator-=   (const big_int& other);
-	big_int&	   operator*=   (const big_int& other) { return *this = *this*other; }
+	big_int&	   operator*=   (const big_int& other) { return *this = *this+other; }
 	big_int&	   operator/=   (const big_int& other) { return *this = *this/other; }
 	friend big_int operator+    (const big_int&a, const big_int&b);
 	friend big_int operator-    (const big_int&a, const big_int&b);

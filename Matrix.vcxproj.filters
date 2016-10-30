@@ -15,11 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="big_int.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="in.txt">
       <Filter>资源文件</Filter>
     </Text>
@@ -28,14 +23,8 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="big_int.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="natnum.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\basic\bas_matrix.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
