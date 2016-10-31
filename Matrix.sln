@@ -56,6 +56,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "高精度性能测试", "�
 		{C834E7FB-4675-4CFE-8752-F50F07B6A506} = {C834E7FB-4675-4CFE-8752-F50F07B6A506}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "多线程计算Fibonacci数列", "多线程计算Fibonacci数列\多线程计算Fibonacci数列.vcxproj", "{F2BF68CB-054A-4B24-8380-4009344DB60E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C834E7FB-4675-4CFE-8752-F50F07B6A506} = {C834E7FB-4675-4CFE-8752-F50F07B6A506}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
@@ -163,6 +168,14 @@ Global
 		{BB7461A0-F309-443C-8F14-88F10DD2B2C5}.Release|x64.Build.0 = Release|x64
 		{BB7461A0-F309-443C-8F14-88F10DD2B2C5}.Release|x86.ActiveCfg = Release|Win32
 		{BB7461A0-F309-443C-8F14-88F10DD2B2C5}.Release|x86.Build.0 = Release|Win32
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Debug|x64.ActiveCfg = Debug|x64
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Debug|x64.Build.0 = Debug|x64
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Debug|x86.ActiveCfg = Debug|Win32
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Debug|x86.Build.0 = Debug|Win32
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x64.ActiveCfg = Release|x64
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x64.Build.0 = Release|x64
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x86.ActiveCfg = Release|Win32
+		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
