@@ -333,19 +333,12 @@ big_int operator*(const big_int& a, const big_int& b)
 		}
 	}
 	re(i, ans.length)
-	{
 		if (ans.data[ans.length - i - 1] > 0)
 		{
 			ans.length -= i;
-			int *temp_data = new int[ans.length];
-			ans.size = ans.length;
-			memcpy(temp_data, ans.data, sizeof(int)*ans.length);
-			delete[]ans.data;
-			ans.data = temp_data;
 			break;
 		}
 		//不会出现为0的情况。
-	}
 	return ans;
 }
 list<big_int> two_list(1, big_int("1"));
