@@ -446,9 +446,9 @@ big_int& big_int::half()
 	{
 		if (data[m - i] % 2 != 0)
 			data[m - i - 1] += 10000;
-		data[m - i] /= 2;
+		data[m - i] >>= 1;
 	}
-	data[0] /= 2;
+	data[0] >>= 1;
 	if (data[length - 1] == 0)
 		length--;
 	if (length == 0)

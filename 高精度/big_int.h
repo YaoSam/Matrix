@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include <iostream>
 #undef re
 #define re(i,n) for(unsigned int i=0,m=n;i<m;i++)
 using namespace std;
@@ -26,7 +26,32 @@ public:
 	big_int(const string& num);
 	big_int(const int &num);
 	big_int(const big_int &other);
+	big_int(big_int&&other)noexcept
+	{
+		data = other.data;
+		length = other.length;
+		sign = other.sign;
+		size = other.size;
+		other.data = nullptr;
+		other.length = 0;
+		other.sign = false;
+		other.size = 0;
+	}
 	big_int& operator=(const big_int& other);
+	big_int& operator=(big_int&& other)noexcept
+	{
+		if (this == &other)	return *this;
+		if (data != nullptr)delete[]data;
+		data = other.data;
+		length = other.length;
+		sign = other.sign;
+		size = other.size;
+		other.data = nullptr;
+		other.length = 0;
+		other.sign = false;
+		other.size = 0;
+		return *this;
+	}
 	~big_int()
 	{
 		if (data != nullptr)

@@ -13,7 +13,6 @@ using namespace std;
 	return_type bas_matrix<deri_matrix, value_type>:: 
 inline unsigned process_num()
 {
-	cout << "hello" << endl;
 	SYSTEM_INFO info;
 	GetSystemInfo(&info);
 	return info.dwNumberOfProcessors;
@@ -56,7 +55,31 @@ public:
 	bas_matrix                (unsigned r, unsigned c);
 	bas_matrix                (T **Data = nullptr, unsigned r = 0, unsigned c = 0);
 	bas_matrix                (const bas_matrix& other);
+	bas_matrix                (bas_matrix&&other)noexcept
+	{
+		data = other.data;
+		row_p = other.row_p;
+		row = other.row;
+		col = other.col;
+		other.data = nullptr;
+		other.row_p = nullptr;
+		other.row = other.col = 0;
+	}
 	deri_matrix& operator=    (const deri_matrix & other);
+	deri_matrix& operator=    (deri_matrix&& other)noexcept
+	{
+		if (this == &other)return *this;
+		if (data)	delete[]data;
+		if (row_p)	delete[]row_p;
+		data = other.data;
+		row_p = other.row_p;
+		row = other.row;
+		col = other.col;
+		other.data = nullptr;
+		other.row_p = nullptr;
+		other.row = other.col = 0;
+		return *this;
+	}
 	T *const operator[]       (unsigned r)      { return row_p[r]; }
 	const T*const operator[]  (unsigned r)const { return row_p[r]; }
 	friend ostream& operator<<(ostream& out, const deri_matrix& me)
