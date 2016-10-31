@@ -2,6 +2,7 @@
 #include <iostream>
 #include <mutex>
 #include <vector>
+#include <list>
 #undef re
 #define re(i,n) for(int i=0,m=n;i<m;i++)
 const int ten[6] = { 1,10,100,1000,10000,100000 };
@@ -73,7 +74,7 @@ big_int::big_int(const big_int & other) :
 	data(nullptr),
 	length(other.length),
 	sign(other.sign),
-	size(2*other.length)//并没有用other的size
+	size(other.length)
 {
 	if(length>0)
 	{
@@ -347,15 +348,16 @@ big_int operator*(const big_int& a, const big_int& b)
 	}
 	return ans;
 }
-
+list<big_int> two_list(1, big_int("1"));
+mutex _lock_list;
 big_int operator/(big_int a, const big_int&b)//TODO 除法的符号。
 {
 	static const big_int zero("0"), one("1"), two("2");
-	static mutex _lock_two_arr;
 	if (b == zero)throw "can't / zero!";
 	if (b == one)return a;
 	if (cmp_abs_smaller(a, b))return zero;
 	bool sign = (a.sign != b.sign);
+	//b<10000时。直接除就好了……
 	if(b.length==1)
 	{
 		big_int ans(a);
@@ -376,27 +378,34 @@ big_int operator/(big_int a, const big_int&b)//TODO 除法的符号。
 		return sign ? ans.negative() : ans;
 	}
 	big_int ans,temp("1"),temp_b;
-	static vector<big_int> two_arr(1,temp);
+	//补充2^n这个队列。
 	static const float coef = log2(10);
 	int len = int(coef*(4*a.length + 1));
-	_lock_two_arr.lock();
-	while (two_arr.size() < len)
-			two_arr.push_back(two_arr[two_arr.size() - 1] * two);
-	_lock_two_arr.unlock();
-	while (!cmp_abs_smaller(two_arr[len - 1],a))
-		len--;
-	temp_b = two_arr[len - 1] * b;
-	a.sign=temp_b.sign = false;
+	_lock_list.lock();
+	while (two_list.size() < len)
+			two_list.push_back(*(--two_list.end()) * two);
+	_lock_list.unlock();
+	//查找一个刚好比a大的2^n
+	auto p = two_list.cbegin();
+	re(i, len-1)++p;
+	while (!cmp_abs_smaller(*p, a))--p, --len;
+	//开始除法。
+	temp_b = *p * b;
+	a.sign = temp_b.sign = false;
 	re(i, len)
 	{
 		if (temp_b == a)
-			return sign ? (ans + two_arr[len - i - 1]).negative() : (ans + two_arr[len - i - 1]);
-		if (temp_b<a)
+		{
+			ans += *p;
+			break;
+		}
+		if (temp_b < a)
 		{
 			a -= temp_b;
-			ans += two_arr[len - i - 1];
+			ans += *p;
 		}
 		temp_b.half();
+		--p;
 	}
 	return sign ? ans.negative() : ans;
 }
@@ -497,7 +506,7 @@ big_int gcd(big_int a, big_int b)
 	//	return kgcd(abs(a - b), a > b ? b : a);
 	//}
 	
-	static big_int two("2");
+	static const big_int two("2");
 	big_int ans("1");
 	ans.sign = a.sign&&b.sign;
 	a.sign = b.sign = false;
