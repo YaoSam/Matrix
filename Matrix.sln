@@ -33,6 +33,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "高精度", "高精度\高精度.vcxproj", "{C834E7FB-4675-4CFE-8752-F50F07B6A506}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Matrix", "Matrix.vcxproj", "{586878C7-5CD7-46EF-A82D-0C38F8B1FD27}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B0DB4E4C-CD80-42EB-BDF0-715914FD104A} = {B0DB4E4C-CD80-42EB-BDF0-715914FD104A}
+		{C01662BC-8931-4494-9658-5640C1BA6397} = {C01662BC-8931-4494-9658-5640C1BA6397}
+		{C834E7FB-4675-4CFE-8752-F50F07B6A506} = {C834E7FB-4675-4CFE-8752-F50F07B6A506}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_自然数", "example_自然数\example_自然数.vcxproj", "{90128FFC-B955-4154-9F07-12AB79E2F8C9}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -46,6 +51,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example_QR分解——house
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "高精度性能测试", "高精度性能测试\高精度性能测试.vcxproj", "{BB7461A0-F309-443C-8F14-88F10DD2B2C5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C01662BC-8931-4494-9658-5640C1BA6397} = {C01662BC-8931-4494-9658-5640C1BA6397}
+		{C834E7FB-4675-4CFE-8752-F50F07B6A506} = {C834E7FB-4675-4CFE-8752-F50F07B6A506}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(Performance) = preSolution

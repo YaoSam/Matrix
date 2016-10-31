@@ -119,6 +119,7 @@
     </ProjectReference>
     <ProjectReference Include="..\高精度\高精度.vcxproj">
       <Project>{c834e7fb-4675-4cfe-8752-f50f07b6a506}</Project>
+      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

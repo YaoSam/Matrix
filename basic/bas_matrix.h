@@ -252,7 +252,6 @@ Template() bas_matrix(T ** Data, unsigned r, unsigned c) :
 		row_p[i] = data + i*col;
 		re(j, col)
 			row_p[i][j] = Data[i][j];
-		//memcpy(row_p[i], Data[i], sizeof(T)*row);
 	}
 }
 
@@ -265,7 +264,6 @@ Template() bas_matrix(const bas_matrix & other) :
 	row_p = new T*[row];
 	re(i, row*col)
 		data[i] = other.data[i];
-	//memcpy(data, other.data, sizeof(T)*row*col);
 	re(i, row)//整体位移。
 		row_p[i] = data + (other.row_p[i] - other.data);
 }
@@ -285,7 +283,6 @@ Template(deri_matrix &) operator=(const deri_matrix & other)
 			row_p = new T*[row];
 		}
 	}
-	//memcpy(data, other.data, sizeof(T)*row*col);
 	re(i, row*col)
 		data[i]  = other.data[i];
 	re(i, row)
@@ -320,8 +317,6 @@ Template(deri_matrix &) operator*=(const deri_matrix & other)
 		for (unsigned j = i; j < row; j += n)
 			re(k, other.col)
 				dot_product(temp_row_p[j][k], row_p[j], other.row_p, k, col);
-				//re(l, col)
-					//temp_row_p[j][k] = row_p[j][l] * other.row_p[l][k];
 	}));
 	for (auto& i : Thread)
 		i.join();
@@ -367,8 +362,6 @@ Template(deri_matrix) operator*(const deri_matrix & other) const
 		{
 			re(k, other.col)
 				dot_product(ans.row_p[j][k], row_p[j], other.row_p, k, col);
-				//re(l, col)
-				//ans.row_p[j][k] += row_p[j][l] * other.row_p[l][k];
 		}
 	}));
 	for (auto& i : Thread)
@@ -446,16 +439,11 @@ Template(deri_matrix) LU_solve(const deri_matrix & input) const
 	re(i, row)
 	{
 		dot_product(temp, row_p[i], ans.data, i);
-		//for (unsigned k = 0; k < i; k++)
-			//temp += row_p[i][k] * ans.data[k];
 		ans.data[i] = input.data[i] - temp;
-		//temp        = T();//temp不能忘了重置。
 	}
 	for (int i = row - 1; i >= 0; i--, temp = T())
 	{
 		dot_product(temp, row_p[i] + i + 1, ans.data + i + 1, row - i - 1);
-		//for (unsigned k = i + 1; k < row; k++)
-			//temp += row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= row_p[i][i];
 	}
 	return ans;
@@ -472,17 +460,11 @@ Template(deri_matrix) solve(const deri_matrix & input) const
 	re(i, row)
 	{
 		dot_product(temp, me.row_p[i], ans.data, i);
-		//temp = T(0);
-		//for (unsigned k = 0; k + 1 <= i; k++)
-			//temp += me.row_p[i][k] * ans.data[k];
 		ans.data[i] = b.data[i] - temp;
 	}
 	for (int i = row - 1; i >= 0; i--)
 	{
 		dot_product(temp, me.row_p[i] + i + 1, ans.data + i + 1, row - i - 1);
-		//temp = T(0);
-		//for (unsigned k = i + 1; k < row; k++)
-			//temp += me.row_p[i][k] * ans.data[k];
 		(ans.data[i] -= temp) /= me.row_p[i][i];
 	}
 	return ans;
@@ -505,17 +487,11 @@ Template(deri_matrix) inverse() const
 			re(i, row)
 			{
 				dot_product(temp, me.row_p[i], ans.row_p, j, i);
-				//temp = T();
-				//for (unsigned k = 0; k + 1 <= i; k++)
-				//	temp += me.row_p[i][k] * ans.row_p[k][j];
 				ans.row_p[i][j] = b.row_p[i][j] - temp;
 			}
 			for (int i = row - 1; i >= 0; i--)
 			{
 				dot_product(temp, me.row_p[i] + i + 1, ans.row_p + i + 1, j, row - i - 1);
-				//temp = T();
-				//for (unsigned k = i + 1; k < row; k++)
-				//	temp += me.row_p[i][k] * ans.row_p[k][j];
 				(ans.row_p[i][j] -= temp) /= me.row_p[i][i];
 			}
 		}
@@ -538,16 +514,10 @@ Template(void) QR(deri_matrix& Q, deri_matrix& R)const
 		for (int j = 0; j  < i; j++)
 		{
 			dot_product(R.row_p[j][i], Q.row_p, j, row_p, i, row);
-			//re(k, row)
-				//R.row_p[j][i] += Q.row_p[k][j] * row_p[k][i];
 			re(k,row)
 				Q.row_p[k][i] -= R.row_p[j][i] * Q.row_p[k][j];
 		}
-
 		two_norm(R.row_p[i][i], Q.row_p, i, row);
-		//re(k, row)
-			//R.row_p[i][i] += Q.row_p[k][i] * Q.row_p[k][i];
-		//R.row_p[i][i] = sqrt(R.row_p[i][i]);//必须定义求根号。
 		if (R.row_p[i][i]==T())
 			throw"three must be something wrong";
 		re(k, row)
@@ -664,9 +634,15 @@ public:
 	Matrix(T **Data = nullptr, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	//Matrix(T *Data, unsigned r = 0, unsigned c = 0) :bas_matrix(Data, r, c) {}
 	Matrix(const Matrix& other) :bas_matrix(other) {}
+	Matrix(Matrix&& other)noexcept :bas_matrix(other){}
 	Matrix& operator=(const Matrix& other)
 	{
 		static_cast<bas_matrix<Matrix<value_type>, value_type>&>(*this).operator=(other); 
+		return *this;
+	}
+	Matrix& operator=(Matrix&& other)noexcept
+	{
+		static_cast<bas_matrix<Matrix<value_type>, value_type>&&>(*this).operator=(other);
 		return *this;
 	}
 	~Matrix() {};

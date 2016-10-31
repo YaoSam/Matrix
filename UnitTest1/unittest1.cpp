@@ -411,6 +411,9 @@ namespace UnitTest1
 				const unsigned Test_case = 100;
 				Matrix<q> A(Test_size, Test_size);
 				Matrix<q> b(Test_size, 1),ans,delta;
+				LARGE_INTEGER t1, t2, tc;
+				QueryPerformanceFrequency(&tc);
+				QueryPerformanceCounter(&t1);
 				re(t, Test_case)
 				{
 					re(i, Test_size)
@@ -432,8 +435,11 @@ namespace UnitTest1
 					}
 					
 				}
+				QueryPerformanceCounter(&t2);
 				out.close();
-				
+				char message[100];
+				sprintf_s(message,"Use Time:%fms\n", 1e3*(t2.QuadPart - t1.QuadPart)*1.0 / tc.QuadPart);
+				Logger::WriteMessage(message);
 			}
 			catch (const char* error) { debug(error); }
 		}

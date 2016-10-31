@@ -117,7 +117,6 @@
     <Text Include="out.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\basic\bas_matrix.h" />
     <ClInclude Include="big_int.h" />
     <ClInclude Include="natnum.h" />
   </ItemGroup>
