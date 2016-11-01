@@ -79,6 +79,7 @@ public:
 		create(up*other.down, down*other.up);
 		return *this;
 	}
+	natural_num operator-()const { auto ans = *this; ans.up *= -1; return ans; }
 	friend natural_num operator+(const natural_num& a, const natural_num& other) { return natural_num(a) += other; }
 	friend natural_num operator-(const natural_num& a, const natural_num& other) { return natural_num(a) -= other; }
 	friend natural_num operator*(const natural_num& a, const natural_num& other) { return natural_num(a) *= other; }

@@ -54,7 +54,7 @@ int main()
 	try {
 		/*Ö÷º¯Êý*/
 		vector<thread> Thread;
-		int n = 70000;
+		int n = 97000;
 		unsigned int T_n = 2*thread_num;
 		Fib[0] = 0;
 		Fib[1] = 1;
@@ -67,7 +67,7 @@ int main()
 		{
 			re(i, 4* thread_num)
 				Fib[i + 2] = Fib[i] + Fib[i + 1];
-			for (int i = 0; i<thread_num; i++)
+			for (int i = 0; i < thread_num - 1; i++)
 			{
 				Thread.push_back(thread([i, T_n, n]()
 				{
@@ -77,6 +77,11 @@ int main()
 						Fib[j + 1] = Fib[j - T_n] * Fib[T_n] + Fib[j - T_n + 1] * Fib[T_n + 1];
 					}
 				}));
+			}
+			for (int j = 2 * (thread_num - 1 + T_n); j < n; j += T_n)
+			{
+				Fib[j] = Fib[j - T_n] * Fib[T_n - 1] + Fib[j - T_n + 1] * Fib[T_n];
+				Fib[j + 1] = Fib[j - T_n] * Fib[T_n] + Fib[j - T_n + 1] * Fib[T_n + 1];
 			}
 			for (auto & i : Thread)
 				i.join();

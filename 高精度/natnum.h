@@ -60,6 +60,7 @@ public:
 		create(up*other.down, down*other.up);
 		return *this;
 	}
+	natnum  operator-()const { auto ans = *this; ans.up.sign = !ans.up.sign; return ans; }
 	friend natnum operator+(const natnum& a, const natnum& b) { return natnum(a.up*b.down + a.down*b.up, a.down*b.down); }
 	friend natnum operator-(const natnum& a, const natnum& b) { return natnum(a.up*b.down - a.down*b.up, a.down*b.down); }
 	friend natnum operator*(const natnum& a, const natnum& b) { return natnum(a.up*b.up, a.down*b.down); }

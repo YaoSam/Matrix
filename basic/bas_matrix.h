@@ -45,11 +45,6 @@ protected:
 	unsigned find_MaxInCol(unsigned c, unsigned under = 0)const;//从under开始找某列的最大值。
 	void release          ();
 	void apply_unsafe     (unsigned m, unsigned n);//change the shape.
-	void clear()const//make all zero.
-	{
-		re(i, row)
-			memset(row_p[i], 0, sizeof(T)*col);
-	}
 public:
 	deri_matrix static one(unsigned n);
 	bas_matrix                (unsigned r, unsigned c);
@@ -194,7 +189,6 @@ Template(unsigned) find_MaxInCol(unsigned c, unsigned under) const//必须定义
 	T current_max = row_p[under][c];
 	for (unsigned i = under + 1; i < row; i++)
 		if(abs_cmp(row_p[i][c], current_max))
-		//if (abs(row_p[i][c])>abs(current_max))
 		{
 			current_max = row_p[i][c];
 			ans         = i;
@@ -383,18 +377,18 @@ Template(bool) operator==(const deri_matrix& other)const
 Template(deri_matrix &) LU()//必须定义除法
 {
 	unsigned min = (row < col ? row : col) - 1;//提前-1.最后一行不用处理。
-	T coefficient = T(0);
+	T coefficient = T();
 	re(i, min)
 	{
-		if (row_p[i][i] == T(0))
+		if (row_p[i][i] == T())
 			throw "can't be 0";
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			if (row_p[j][i] == T(0))
+			if (row_p[j][i] == T())
 				continue;
-			coefficient = T(0) - row_p[j][i] / row_p[i][i];
+			coefficient =  - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = T(0) - coefficient;
+			row_p[j][i] =  - coefficient;
 		}
 	}
 	return static_cast<deri_matrix&>(*this);
@@ -416,15 +410,15 @@ Template(deri_matrix) ChosenLU()
 			P.ExchangeR(i, max);
 			ExchangeR(i, max);
 		}
-		if (row_p[i][i] == T(0))
+		if (row_p[i][i] == T())
 			throw "can't be 0";
 		for (unsigned j = i + 1; j < row; j++)
 		{
-			if (row_p[j][i] == T(0))
+			if (row_p[j][i] == T())
 				continue;
-			coefficient = T(0) - row_p[j][i] / row_p[i][i];
+			coefficient =  - row_p[j][i] / row_p[i][i];
 			RowAplusRowB(j, i, coefficient, i);
-			row_p[j][i] = T(0) - coefficient;
+			row_p[j][i] =  - coefficient;
 		}
 	}
 	return P;
