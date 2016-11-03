@@ -58,7 +58,17 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "多线程计算Fibonacci数
 		{C834E7FB-4675-4CFE-8752-F50F07B6A506} = {C834E7FB-4675-4CFE-8752-F50F07B6A506}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "最小二乘法拟合圆（期中）", "最小二乘法拟合圆（期中）\最小二乘法拟合圆（期中）.vcxproj", "{19A3DE84-8B31-40A9-946A-7381C682B033}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C01662BC-8931-4494-9658-5640C1BA6397} = {C01662BC-8931-4494-9658-5640C1BA6397}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mkl_test", "mkl_test\mkl_test.vcxproj", "{20905AD2-2E54-415F-A36D-6DA335D2405E}"
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
@@ -170,6 +180,22 @@ Global
 		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x64.Build.0 = Release|x64
 		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x86.ActiveCfg = Release|Win32
 		{F2BF68CB-054A-4B24-8380-4009344DB60E}.Release|x86.Build.0 = Release|Win32
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Debug|x64.ActiveCfg = Debug|x64
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Debug|x64.Build.0 = Debug|x64
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Debug|x86.ActiveCfg = Debug|Win32
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Debug|x86.Build.0 = Debug|Win32
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Release|x64.ActiveCfg = Release|x64
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Release|x64.Build.0 = Release|x64
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Release|x86.ActiveCfg = Release|Win32
+		{19A3DE84-8B31-40A9-946A-7381C682B033}.Release|x86.Build.0 = Release|Win32
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Debug|x64.ActiveCfg = Debug|x64
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Debug|x64.Build.0 = Debug|x64
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Debug|x86.ActiveCfg = Debug|Win32
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Debug|x86.Build.0 = Debug|Win32
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Release|x64.ActiveCfg = Release|x64
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Release|x64.Build.0 = Release|x64
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Release|x86.ActiveCfg = Release|Win32
+		{20905AD2-2E54-415F-A36D-6DA335D2405E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
